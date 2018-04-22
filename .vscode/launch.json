@@ -8,7 +8,9 @@
             "name": "PlatformIO Debugger",
             "target": "c:/Users/Me/Documents/PlatformIO/Projects/Souliis_FAN_HUMI/.pioenvs/pro16MHzatmega328/firmware.elf",
             "gdbpath": "C:/Users/Me/.platformio/penv/Scripts/piodebuggdb",
-            "autorun": [ "source .pioinit" ]
+            "autorun": [ "source .pioinit" ],
+            "preLaunchTask": "PlatformIO: Pre-Debug",
+            "internalConsoleOptions": "openOnSessionStart"
         }
     ]
 }
