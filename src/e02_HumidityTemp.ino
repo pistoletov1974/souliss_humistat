@@ -50,7 +50,7 @@
 #define DHTPIN            2     //data pin for dht sensor
 #define DHTTYPE           DHT22
 #define LIGHTPIN          5
-#define LIGHT_TIME        20000 // time before fan goes on in millis
+#define LIGHT_TIME        20000UL // time before fan goes on in millis
 ////#define DHTPIN 2 // what digital pin we're connected to
 
 #define DHT_id1   1 
@@ -167,10 +167,11 @@ void loop()
 		{
 
 			
-               if ((digitalRead(LIGHTPIN==HIGH)&&light_prev==0 )) {
+               if ((digitalRead(LIGHTPIN==HIGH)&&light_prev==LOW )) {
                     // light going on we need to start counter
                    light_on_millis = millis();
                    light_state = 1;
+				   Serial.print("Light ON front");
                }
                  
                if  ( (digitalRead(LIGHTPIN)==HIGH) && ((millis()-light_on_millis)>LIGHT_TIME ) && (light_state==1) )
