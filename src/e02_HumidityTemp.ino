@@ -115,7 +115,7 @@ void setup()
 	sendNTPpacket(timeServer);
 
 	Serial.println("packet sent");
-  Serial.println("Verion 1.1");
+  Serial.println("Verion 1.2");
 
 	delay(3000);
 
@@ -176,11 +176,11 @@ void loop()
 
 				if (hour > 7 && hour < 23)
 				{
-					DigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_HIGH, 30000UL);
+					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_HIGH, 30000UL);
 				}
 
 				else
-					DigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_LOW, 30000UL);
+					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_LOW, 30000UL);
 			}
 
 			//Souliss_DigInHold(5, Souliss_T1n_OffCmd, Souliss_T1n_OnCmd, LIGHT, 10000);
