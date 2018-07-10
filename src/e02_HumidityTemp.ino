@@ -37,6 +37,7 @@
 #include <SPI.h>
 #include <Adafruit_Sensor.h>
 #include <DHT.h>
+#include <Adafruit_NeoPixel.h>
 
 //debug mode
 #define SERIALPORT_INSKETCH
@@ -106,6 +107,7 @@ void setup()
 	Udp.begin(8888);
 	Serial.begin(9600);
 	dht.begin(); // initialize temperature sensor
+	Adafruit_NeoPixel strip = Adafruit_NeoPixel(2, 6, NEO_GRB + NEO_KHZ800);
 	pinMode(9, OUTPUT);
 	pinMode(4, OUTPUT);
 	pinMode(light_pin, INPUT);
