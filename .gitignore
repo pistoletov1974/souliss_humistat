@@ -1,12 +1,6 @@
 .pioenvs
 .piolibdeps
 .vscode/c_cpp_properties.json
-<<<<<<< HEAD
 .vscode/.browse.c_cpp.db*
 .vscode/launch.json
 .vscode/settings.json
-=======
-.vscode/settings.json
-.vscode/launch.json
-.vscode/.browse.c_cpp.db*
->>>>>>> 62e54a9895ff0209ba318187f654e465b2b3bb4d

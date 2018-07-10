@@ -56,16 +56,19 @@
 //#define DHTPIN 2 // what digital pin we're connected to
 #define Valve_Open_PIN  6
 #define Valve_Close_PIN 7
+#define pixel_pin       3
+#define Airwick_pin     8 
 /*** All configuration includes should be above this line ***/
 #include "Souliss.h"
 
-#define HUMIDITY 0 // Leave 2 slots for T53
+#define HUMIDITY 0 // Leav8e 2 slots for T53
 #define TEMP0 2	// Leave 2 slots for T52
 #define FAN_LOW 4
 #define FAN_HIGH 5
 #define LIGHT 6
 #define HUMISET 8
 #define Cold_Valve 10
+#define NEO_PIXEL  11
 
 
 
@@ -107,7 +110,7 @@ void setup()
 	Udp.begin(8888);
 	Serial.begin(9600);
 	dht.begin(); // initialize temperature sensor
-	Adafruit_NeoPixel strip = Adafruit_NeoPixel(2, 6, NEO_GRB + NEO_KHZ800);
+	Adafruit_NeoPixel strip = Adafruit_NeoPixel(2, pixel_pin, NEO_GRB + NEO_KHZ800);
 	pinMode(9, OUTPUT);
 	pinMode(4, OUTPUT);
 	pinMode(light_pin, INPUT);
@@ -119,6 +122,7 @@ void setup()
 	Set_DigitalInput(LIGHT);
 	Set_Humidity_Setpoint(HUMISET);
 	Set_T22(Cold_Valve);
+	Set_T16(NEO_PIXEL);
 
 
 
