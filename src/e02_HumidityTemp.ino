@@ -204,7 +204,7 @@ void loop()
 			Logic_SimpleLight(FAN_HIGH);
 			Logic_SimpleLight(FAN_LOW);
 
-			Logic_Humidity_Setpoint(HUMISET);
+			//Logic_Humidity_Setpoint(HUMISET);
 			Logic_Humidity(HUMIDITY);
 			Logic_Temperature(TEMP0);
 			Logic_T22(Cold_Valve);
@@ -212,6 +212,7 @@ void loop()
 			DigOut(Valve_Close_PIN,Souliss_T2n_Coil_Close,Cold_Valve);
 			DigOut(4, Souliss_T1n_Coil, FAN_LOW);
 			DigOut(9, Souliss_T1n_Coil, FAN_HIGH);
+			Logic_T16(NEO_PIXEL);
 		}
 
 		FAST_90ms()
@@ -283,7 +284,7 @@ void loop()
 			//Serial.println(Souliss_SinglePrecisionFloating(&mOutput((HUMIDITY))));
 			// high humidity
 			//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 75% пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-			if (humidity > 80 && fan_state == FAN_OFF)
+			if (humidity > 85 && fan_state == FAN_OFF)
 			{
 				// day and use fan high
 				fan_state = FAN_ON_HUMI;
