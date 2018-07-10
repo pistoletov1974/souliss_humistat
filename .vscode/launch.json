@@ -1,20 +1,28 @@
+// AUTOMATICALLY GENERATED FILE. PLEASE DO NOT MODIFY IT MANUALLY
+
+// PIO Unified Debugger
+//
+// Documentation: http://docs.platformio.org/page/plus/debugging.html
+// Configuration: http://docs.platformio.org/page/projectconf/section_env_debug.html
+
 {
     "version": "0.2.0",
     "configurations": [
         {
-            "type": "gdb",
+            "type": "platformio-debug",
             "request": "launch",
-            "cwd": "${workspaceRoot}",
-            "name": "PlatformIO Debugger",
-<<<<<<< HEAD
-            "target": "d:/!!!!DIY_PROJECTS!!!!!/ARDUINO/souliss_humistat/.pioenvs/pro16MHzatmega328/firmware.elf",
-            "gdbpath": "C:/Users/Artem/.platformio/penv/Scripts/piodebuggdb",
-=======
-            "target": "c:/Users/Me/Documents/PlatformIO/Projects/Souliis_FAN_HUMI/.pioenvs/pro16MHzatmega328/firmware.elf",
-            "gdbpath": "C:/Users/Me/.platformio/penv/Scripts/piodebuggdb",
->>>>>>> 2bc42386caa5718708d0f44b3ab73f91b37f01a4
-            "autorun": [ "source .pioinit" ],
+            "name": "PIO Debug",
+            "executable": "d:/!!!!DIY_PROJECTS!!!!!/ARDUINO/souliss_humistat/.pioenvs/pro16MHzatmega328/firmware.elf",
+            "toolchainBinDir": "C:/Users/Artem/.platformio/packages/toolchain-atmelavr/bin",
             "preLaunchTask": "PlatformIO: Pre-Debug",
+            "internalConsoleOptions": "openOnSessionStart"
+        },
+        {
+            "type": "platformio-debug",
+            "request": "launch",
+            "name": "PIO Debug (Skip Pre-Debug)",
+            "executable": "d:/!!!!DIY_PROJECTS!!!!!/ARDUINO/souliss_humistat/.pioenvs/pro16MHzatmega328/firmware.elf",
+            "toolchainBinDir": "C:/Users/Artem/.platformio/packages/toolchain-atmelavr/bin",
             "internalConsoleOptions": "openOnSessionStart"
         }
     ]
