@@ -46,9 +46,15 @@
 //#define DHTTYPE DHT11   // DHT 11
 #define DHTTYPE DHT22 // DHT 22 (AM2302), AM2321
 //#define DHTTYPE DHT21   // DHT 21 (AM2301)
+#define DHTPIN            2     //data pin for dht sensor
+#define DHTTYPE           DHT22
+#define LIGHTPIN          5
+#define LIGHT_TIME        20000UL // time before fan goes on in millis
+////#define DHTPIN 2 // what digital pin we're connected to
 
-#define DHTPIN 2 // what digital pin we're connected to
-
+//#define DHTPIN 2 // what digital pin we're connected to
+#define Valve_Open_PIN  6
+#define Valve_Close_PIN 7
 /*** All configuration includes should be above this line ***/
 #include "Souliss.h"
 
@@ -58,6 +64,7 @@
 #define FAN_HIGH 5
 #define LIGHT 6
 #define HUMISET 8
+#define Cold_Valve 10
 
 
 
@@ -82,7 +89,7 @@ float humidity_prev = 0;
 #define myvNet_address ip_address[3] // The last byte of the IP address (77) is also the vNet address
 #define myvNet_subnet 0xFF00
 EthernetUDP Udp;
-char timeServer[] = "time.nist.gov"; // time.nist.gov NTP server
+char timeServer[] = "europe.pool.ntp.org"; // time.nist.gov NTP server
 
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
 
@@ -102,20 +109,23 @@ void setup()
 	pinMode(9, OUTPUT);
 	pinMode(4, OUTPUT);
 	pinMode(light_pin, INPUT);
-  digitalWrite(light_pin,LOW);
+    digitalWrite(light_pin,LOW);
 	Set_Humidity(HUMIDITY);
 	Set_Temperature(TEMP0);
 	Set_SimpleLight(FAN_HIGH);
 	Set_SimpleLight(FAN_LOW);
 	Set_DigitalInput(LIGHT);
 	Set_Humidity_Setpoint(HUMISET);
+	Set_T22(Cold_Valve);
+
+
 
 	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
 	sendNTPpacket(timeServer);
 
 	Serial.println("packet sent");
-  Serial.println("Verion 1.2");
+    Serial.println("Verion 2.11");
 
 	delay(3000);
 
@@ -191,6 +201,9 @@ void loop()
 			Logic_Humidity_Setpoint(HUMISET);
 			Logic_Humidity(HUMIDITY);
 			Logic_Temperature(TEMP0);
+			Logic_T22(Cold_Valve);
+			DigOut(Valve_Open_PIN,Souliss_T2n_Coil_Open,Cold_Valve);
+			DigOut(Valve_Close_PIN,Souliss_T2n_Coil_Close,Cold_Valve);
 			DigOut(4, Souliss_T1n_Coil, FAN_LOW);
 			DigOut(9, Souliss_T1n_Coil, FAN_HIGH);
 		}
@@ -205,6 +218,15 @@ void loop()
 
 			Timer_SimpleLight(FAN_HIGH);
 			Timer_SimpleLight(FAN_LOW);
+		
+		}
+
+        // default time 0xC0-0xA0 * 210 ms app 6 sec
+		FAST_210ms()
+		{
+				
+				Timer_T22(Cold_Valve);
+
 		}
 
 		// Process the other Gateway stuffs
@@ -217,7 +239,7 @@ void loop()
 		SLOW_10s()
 		{
 
-			Serial.print("STATE HIGH LOW INPUT_LIGHT FAN_STATE:,");
+			Serial.print("STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE:,");
 			Serial.print(mInput(FAN_HIGH));
 			Serial.print(mOutput(FAN_HIGH));
 			Serial.print(mAuxiliary(FAN_HIGH));
@@ -225,11 +247,18 @@ void loop()
 			Serial.print(mInput(FAN_LOW));
 			Serial.print(mOutput(FAN_LOW));
 			Serial.print(mAuxiliary(FAN_LOW));
+			
       Serial.print(",");
       int sensor_read=digitalRead(5);
 			Serial.print(sensor_read);
       Serial.print(",");
-			Serial.println(fan_state);
+			Serial.print(fan_state);
+			Serial.print(",");
+			Serial.print(mInput(Cold_Valve));
+			//Serial.print(",");
+			Serial.print(mOutput(Cold_Valve));
+			//Serial.print(",");
+			Serial.println(mAuxiliary(Cold_Valve));
 		}
 
 		SLOW_50s()
@@ -325,7 +354,7 @@ void sendNTPpacket(char *address)
 {
 	// set all bytes in the buffer to 0
 	memset(packetBuffer, 0, NTP_PACKET_SIZE);
-	IPAddress ntp(194, 54, 80, 30);
+	IPAddress ntp(132, 163, 97, 1);
 	// Initialize values needed to form NTP request
 	// (see URL above for details on the packets)
 	packetBuffer[0] = 0b11100011; // LI, Version, Mode
