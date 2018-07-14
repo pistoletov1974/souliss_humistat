@@ -93,7 +93,7 @@ float humidity_prev = 0;
 #define myvNet_address ip_address[3] // The last byte of the IP address (77) is also the vNet address
 #define myvNet_subnet 0xFF00
 EthernetUDP Udp;
-char timeServer[] = "europe.pool.ntp.org"; // time.nist.gov NTP server
+
 
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
 
@@ -128,12 +128,12 @@ void setup()
 
 	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
 
-	sendNTPpacket(timeServer);
+	sendNTPpacket();
 
 	Serial.println("packet sent");
-    Serial.println("Verion 2.11");
+    Serial.println("Verion 2.12");
 
-	delay(3000);
+	delay(2000);
 
 	if (Udp.parsePacket())
 	{
@@ -284,7 +284,7 @@ void loop()
 			//Serial.println(Souliss_SinglePrecisionFloating(&mOutput((HUMIDITY))));
 			// high humidity
 			//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 75% пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-			if (humidity > 85 && fan_state == FAN_OFF)
+			if ((humidity > 85 && fan_state == FAN_OFF) || (humidity>95))
 			{
 				// day and use fan high
 				fan_state = FAN_ON_HUMI;
@@ -312,14 +312,14 @@ void loop()
 			}
 		}
 
-		SLOW_30m()
+		SLOW_15m()
 		{
 
-			sendNTPpacket(timeServer);
+			sendNTPpacket();
 
 			//Serial.println("packet sent");
 
-			delay(3000);
+			delay(2000);
 
 			if (Udp.parsePacket())
 			{
@@ -357,11 +357,11 @@ void loop()
 	}
 }
 
-void sendNTPpacket(char *address)
+void sendNTPpacket()
 {
 	// set all bytes in the buffer to 0
 	memset(packetBuffer, 0, NTP_PACKET_SIZE);
-	IPAddress ntp(132, 163, 97, 1);
+	IPAddress ntp(192, 168, 0, 1);
 	// Initialize values needed to form NTP request
 	// (see URL above for details on the packets)
 	packetBuffer[0] = 0b11100011; // LI, Version, Mode
