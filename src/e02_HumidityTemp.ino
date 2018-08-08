@@ -110,7 +110,7 @@ void setup()
 	Udp.begin(8888);
 	Serial.begin(9600);
 	dht.begin(); // initialize temperature sensor
-	Adafruit_NeoPixel strip = Adafruit_NeoPixel(2, pixel_pin, NEO_GRB + NEO_KHZ800);
+	Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, pixel_pin, NEO_GRB + NEO_KHZ800);
 	pinMode(9, OUTPUT);
 	pinMode(4, OUTPUT);
 	pinMode(light_pin, INPUT);
@@ -131,8 +131,12 @@ void setup()
 	sendNTPpacket(timeServer);
 
 	Serial.println("packet sent");
-    Serial.println("Verion 2.11");
-
+    Serial.println("Verion 2.13");
+   
+	strip.begin();
+	strip.show();
+	 strip.setPixelColor(0,strip.Color(255,179,0)); //RGB
+	strip.show();
 	delay(3000);
 
 	if (Udp.parsePacket())

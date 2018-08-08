@@ -20,3 +20,20 @@ Used Pins:
 7-Valve_close
 8-aromadiffusor (future)
 9-FAN_HIGH
+
+8pin connector
+1-gnd
+2-6pin
+3-7pin
+4-nc
+5-9
+6-4
+7-5 light
+8-vcc
+
+
+4pin conn
+1-vcc
+2-3
+3-8
+4-gnd
