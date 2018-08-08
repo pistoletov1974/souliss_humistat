@@ -138,7 +138,7 @@ void setup()
 	strip.show();
 	 strip.setPixelColor(0,strip.Color(255,179,0)); //RGB
 	strip.show();
-	delay(3000);
+	delay(1000);
 
 
 	if (Udp.parsePacket())
@@ -170,6 +170,7 @@ void setup()
 		hour = (epoch % 86400L) / 3600 + 3;
 		// print the hour (86400 equals secs per day)
 		Serial.println(hour);
+		strip.setPixelColor(0,strip.Color(0,90,0)); 
 	}
 }
 
