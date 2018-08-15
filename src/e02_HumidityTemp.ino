@@ -173,10 +173,11 @@ void setup()
 		hour = (epoch % 86400L) / 3600 + 3;
 		// print the hour (86400 equals secs per day)
 		Serial.println(hour);
-		strip.setPixelColor(0,strip.Color(0,90,0)); 
+		strip.setPixelColor(0,strip.Color(90,90,90)); 
 		
 	}
 	mInput(AirWick)=Souliss_T1n_OnCmd;
+	strip.setPixelColor(0,strip.Color(90,90,90)); 
 }  
 
 void loop()
