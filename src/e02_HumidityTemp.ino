@@ -69,6 +69,7 @@
 #define HUMISET 8
 #define Cold_Valve 10
 #define NEO_PIXEL  11
+#define AirWick    15 
 
 
 
@@ -113,6 +114,7 @@ void setup()
 	Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, pixel_pin, NEO_GRB + NEO_KHZ800);
 	pinMode(9, OUTPUT);
 	pinMode(4, OUTPUT);
+	pinMode(8,OUTPUT);
 	pinMode(light_pin, INPUT);
     digitalWrite(light_pin,LOW);
 	Set_Humidity(HUMIDITY);
@@ -123,6 +125,7 @@ void setup()
 	Set_Humidity_Setpoint(HUMISET);
 	Set_T22(Cold_Valve);
 	Set_T16(NEO_PIXEL);
+	Set_T14(AirWick);
 
 
 
@@ -171,8 +174,10 @@ void setup()
 		// print the hour (86400 equals secs per day)
 		Serial.println(hour);
 		strip.setPixelColor(0,strip.Color(0,90,0)); 
+		
 	}
-}
+	mInput(AirWick)=Souliss_T1n_OnCmd;
+}  
 
 void loop()
 {
@@ -219,6 +224,7 @@ void loop()
 			DigOut(Valve_Close_PIN,Souliss_T2n_Coil_Close,Cold_Valve);
 			DigOut(4, Souliss_T1n_Coil, FAN_LOW);
 			DigOut(9, Souliss_T1n_Coil, FAN_HIGH);
+			DigOut(8,Souliss_T1n_OnCoil,AirWick);
 			Logic_T16(NEO_PIXEL);
 		}
 
@@ -241,6 +247,11 @@ void loop()
 				
 				Timer_T22(Cold_Valve);
 
+		}
+
+	      	FAST_710ms()
+		 {
+            Logic_T14(AirWick);
 		}
 
 		// Process the other Gateway stuffs
