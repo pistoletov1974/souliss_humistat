@@ -80,6 +80,7 @@ uint8_t ip_address[4] = {192, 168, 0, 78};
 uint8_t subnet_mask[4] = {255, 255, 255, 0};
 uint8_t ip_gateway[4] = {192, 168, 0, 1};
 uint8_t hour = 23;
+
 enum states
 {
 	FAN_OFF,
@@ -94,6 +95,8 @@ float humidity_prev = 0;
 #define myvNet_address ip_address[3] // The last byte of the IP address (77) is also the vNet address
 #define myvNet_subnet 0xFF00
 EthernetUDP Udp;
+Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, pixel_pin, NEO_GRB + NEO_KHZ800);
+uint32_t magenta = strip.Color(255, 0, 255);
 
 
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
@@ -111,7 +114,8 @@ void setup()
 	Udp.begin(8888);
 	Serial.begin(9600);
 	dht.begin(); // initialize temperature sensor
-	Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, pixel_pin, NEO_GRB + NEO_KHZ800);
+	
+	 
 	pinMode(9, OUTPUT);
 	pinMode(4, OUTPUT);
 	pinMode(8,OUTPUT);
@@ -173,7 +177,6 @@ void setup()
 		hour = (epoch % 86400L) / 3600 + 3;
 		// print the hour (86400 equals secs per day)
 		Serial.println(hour);
-<<<<<<< HEAD
 		if (hour>7 && hour<23)
 		strip.setPixelColor(0,strip.Color(0,90,0));
 		else strip.setPixelColor(0,strip.Color(255,242,0)); 
@@ -181,13 +184,11 @@ void setup()
 	} else {
 		strip.setPixelColor(0,strip.Color(200,0,0));
 		strip.show();
-=======
-		strip.setPixelColor(0,strip.Color(90,90,90)); 
-		
->>>>>>> 49f500e53ea094d1129eba03443ff25df004e455
 	}
 	mInput(AirWick)=Souliss_T1n_OnCmd;
 	strip.setPixelColor(0,strip.Color(90,90,90)); 
+	strip.show();
+	
 }  
 
 void loop()
@@ -216,6 +217,7 @@ void loop()
 				if (hour > 7 && hour < 23)
 				{
 					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_HIGH, 30000UL);
+					
 				}
 
 				else
@@ -249,6 +251,7 @@ void loop()
 
 			Timer_SimpleLight(FAN_HIGH);
 			Timer_SimpleLight(FAN_LOW);
+			
 		
 		}
 
@@ -257,12 +260,19 @@ void loop()
 		{
 				
 				Timer_T22(Cold_Valve);
+			
 
 		}
 
 	      	FAST_710ms()
 		 {
             Logic_T14(AirWick);
+		}
+
+
+		FAST_510ms()
+		{
+			LowDigIn(5,Souliss_T1n_OnCmd,AirWick);
 		}
 
 		// Process the other Gateway stuffs
@@ -275,7 +285,7 @@ void loop()
 		SLOW_10s()
 		{
 
-			Serial.print("STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE:,");
+			Serial.print("STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE, Airwick:,");
 			Serial.print(mInput(FAN_HIGH));
 			Serial.print(mOutput(FAN_HIGH));
 			Serial.print(mAuxiliary(FAN_HIGH));
@@ -294,7 +304,8 @@ void loop()
 			//Serial.print(",");
 			Serial.print(mOutput(Cold_Valve));
 			//Serial.print(",");
-			Serial.println(mAuxiliary(Cold_Valve));
+			Serial.print(mAuxiliary(Cold_Valve));
+			Serial.println(mInput(AirWick));
 		}
 
 		SLOW_50s()
@@ -381,6 +392,11 @@ void loop()
 				hour = (epoch % 86400L) / 3600 + 3;
 				// print the hour (86400 equals secs per day)
 				Serial.println(hour);
+				if (hour>7 && hour<23)
+		            strip.setPixelColor(0,strip.Color(0,90,0));
+		               else strip.setPixelColor(0,strip.Color(255,242,0)); 
+		             strip.show();
+
 			}
 		}
 	}
