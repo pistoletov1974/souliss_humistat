@@ -96,7 +96,11 @@ float humidity_prev = 0;
 #define myvNet_subnet 0xFF00
 EthernetUDP Udp;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, pixel_pin, NEO_GRB + NEO_KHZ800);
-uint32_t magenta = strip.Color(255, 0, 255);
+const PROGMEM uint32_t magenta = strip.Color(255, 0, 255);
+const PROGMEM uint32_t yellow = strip.Color(255, 255, 0);
+const PROGMEM uint32_t white = strip.Color(255, 255, 255);
+const PROGMEM uint32_t deep_blue = strip.Color(51, 51, 255);
+const PROGMEM uint32_t orange = strip.Color(255, 128, 0);
 
 
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
