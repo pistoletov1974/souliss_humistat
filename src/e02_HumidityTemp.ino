@@ -40,8 +40,8 @@
 #include <Adafruit_NeoPixel.h>
 
 //debug mode
-#define SERIALPORT_INSKETCH
-#define LOG Serial
+//#define SERIALPORT_INSKETCH
+//#define LOG Serial
 
 // Include sensor libraries (from Adafruit) Uncomment whatever type you're using!
 //#define DHTTYPE DHT11   // DHT 11
@@ -80,6 +80,8 @@ uint8_t ip_address[4] = {192, 168, 0, 78};
 uint8_t subnet_mask[4] = {255, 255, 255, 0};
 uint8_t ip_gateway[4] = {192, 168, 0, 1};
 uint8_t hour = 23;
+uint32_t led_colour[4];
+uint8_t  led_num=0;
 
 enum states
 {
@@ -97,7 +99,7 @@ float humidity_prev = 0;
 EthernetUDP Udp;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, pixel_pin, NEO_GRB + NEO_KHZ800);
 const PROGMEM uint32_t magenta = strip.Color(255, 0, 255);
-const PROGMEM uint32_t yellow = strip.Color(255, 255, 0);
+const PROGMEM uint32_t yellow = strip.Color(255, 255, 0); 
 const PROGMEM uint32_t white = strip.Color(255, 255, 255);
 const PROGMEM uint32_t deep_blue = strip.Color(51, 51, 255);
 const PROGMEM uint32_t orange = strip.Color(255, 128, 0);
@@ -150,7 +152,10 @@ void setup()
 	strip.setPixelColor(0,strip.Color(255,179,0)); //RGB
 	strip.show();
 	delay(2000);
-
+    led_colour[0]=magenta;
+	led_colour[1]=yellow;
+	led_colour[2]=deep_blue;
+	led_colour[3]=white;
 
 	if (Udp.parsePacket())
 	{
@@ -278,6 +283,15 @@ void loop()
 		{
 			LowDigIn(5,Souliss_T1n_OnCmd,AirWick);
 		}
+
+
+		FAST_9110ms()
+		 {
+               strip.setPixelColor(0,led_colour[led_num]);
+			   led_num=(led_num<3)?led_num++:0;
+
+			
+		 }
 
 		// Process the other Gateway stuffs
 		FAST_GatewayComms();

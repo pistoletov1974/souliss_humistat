@@ -37,3 +37,8 @@ Used Pins:
 2-3
 3-8
 4-gnd
+ led_array
+ Led[0] - always wite
+ led[1] - day(green) nigh (yellow)
+ led[2] - fan_humi on (green) off (red)
+ led[3] - humi > 80
