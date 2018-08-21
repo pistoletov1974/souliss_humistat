@@ -91,6 +91,8 @@ enum states
 };
 states fan_state = FAN_OFF;
 const int light_pin = 5;
+uint8_t light_state=0, light_state_prev=0;
+uint8_t dead_time=0;
 
 float humidity = 0;
 float humidity_prev = 0;
@@ -103,6 +105,7 @@ const PROGMEM uint32_t yellow = strip.Color(255, 255, 0);
 const PROGMEM uint32_t white = strip.Color(255, 255, 255);
 const PROGMEM uint32_t deep_blue = strip.Color(51, 51, 255);
 const PROGMEM uint32_t orange = strip.Color(255, 128, 0);
+const PROGMEM uint32_t green = strip.Color(50, 205, 50);
 
 
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
@@ -152,10 +155,10 @@ void setup()
 	strip.setPixelColor(0,strip.Color(255,179,0)); //RGB
 	strip.show();
 	delay(2000);
-    led_colour[0]=magenta;
-	led_colour[1]=yellow;
-	led_colour[2]=deep_blue;
-	led_colour[3]=white;
+    led_colour[0]=white;
+	led_colour[1]=green;
+	led_colour[2]=green;
+	led_colour[3]=green;
 
 	if (Udp.parsePacket())
 	{
@@ -275,8 +278,18 @@ void loop()
 
 	      	FAST_710ms()
 		 {
-            Logic_T14(AirWick);
-		}
+           // airwick work only in day if light goes on and fan_high not run
+		   if ((hour>7)&&(hour<23) && (mOutput(FAN_HIGH)==Souliss_T1n_OffCoil) && (dead_time==0) )  {
+		   
+		   light_state=digitalRead(light_pin);
+		   if ((light_state==LOW) && (light_state!=light_state_prev))
+		       	mInput(AirWick)=Souliss_T1n_OnCmd;
+             
+		    light_state_prev=light_state;	
+			dead_time=1;	   
+		   }
+		   Logic_T14(AirWick);
+		 }
 
 
 		FAST_510ms()
@@ -285,10 +298,26 @@ void loop()
 		}
 
 
+		
+
+
 		FAST_9110ms()
 		 {
-               strip.setPixelColor(0,led_colour[led_num]);
+               // led colours rotation (see readme.md)
+			   if ((hour>7) && (hour<23)) led_colour[1]=green;
+                     else led_colour[1]=yellow;
+
+
+			    if (fan_state == FAN_ON_HUMI) led_colour[2]=magenta;
+				  else led_colour[2]=orange;
+
+				if(humidity<60) led_colour[2]=green;
+				  else led_colour[2]=deep_blue;
+
+
+			   strip.setPixelColor(0,led_colour[led_num]);
 			   led_num=(led_num<3)?led_num++:0;
+			   strip.show();
 
 			
 		 }
@@ -366,8 +395,15 @@ void loop()
 				mInput(FAN_HIGH) = Souliss_T1n_OffCmd;
 				mInput(FAN_LOW) = 0x30 + 6 * 15;
 				fan_state = FAN_OFF;
+				mInput(AirWick)=Souliss_T1n_OnCmd;
+				dead_time=1;
 				// 7 пїЅпїЅпїЅпїЅпїЅ
 			}
+		}
+
+        SLOW_510s()
+		 {
+           dead_time=0; 
 		}
 
 		SLOW_15m()
@@ -376,7 +412,7 @@ void loop()
 			sendNTPpacket();
 
 			//Serial.println("packet sent");
-
+            
 			delay(2000);
 
 			if (Udp.parsePacket())
@@ -410,10 +446,9 @@ void loop()
 				hour = (epoch % 86400L) / 3600 + 3;
 				// print the hour (86400 equals secs per day)
 				Serial.println(hour);
-				if (hour>7 && hour<23)
-		            strip.setPixelColor(0,strip.Color(0,90,0));
-		               else strip.setPixelColor(0,strip.Color(255,242,0)); 
-		             strip.show();
+				if (hour==7)  
+				   	mInput(AirWick)=Souliss_T1n_OnCmd;
+
 
 			}
 		}

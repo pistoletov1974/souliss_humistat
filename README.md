@@ -40,5 +40,5 @@ Used Pins:
  led_array
  Led[0] - always wite
  led[1] - day(green) nigh (yellow)
- led[2] - fan_humi on (green) off (red)
- led[3] - humi > 80
+ led[2] - fan_humi off (green) on (orange)
+ led[3] -   humi < 60 (green)  > deep_blue
