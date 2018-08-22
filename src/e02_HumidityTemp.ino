@@ -148,7 +148,7 @@ void setup()
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.13");
+    Serial.println("Verion 2.14");
    
 	strip.begin();
 	strip.show();
@@ -282,11 +282,15 @@ void loop()
 		   if ((hour>7)&&(hour<23) && (mOutput(FAN_HIGH)==Souliss_T1n_OffCoil) && (dead_time==0) )  {
 		   
 		   light_state=digitalRead(light_pin);
-		   if ((light_state==LOW) && (light_state!=light_state_prev))
-		       	mInput(AirWick)=Souliss_T1n_OnCmd;
+		   if ((light_state==LOW) && (light_state!=light_state_prev)) {
+                     mInput(AirWick)=Souliss_T1n_OnCmd;
+					 dead_time=1;
+
+		   }
+		       	
              
 		    light_state_prev=light_state;	
-			dead_time=1;	   
+				   
 		   }
 		   Logic_T14(AirWick);
 		 }
@@ -301,9 +305,10 @@ void loop()
 		
 
 
-		FAST_9110ms()
+		FAST_2110ms()
 		 {
                // led colours rotation (see readme.md)
+			   Serial.println(led_num);
 			   if ((hour>7) && (hour<23)) led_colour[1]=green;
                      else led_colour[1]=yellow;
 
@@ -311,12 +316,13 @@ void loop()
 			    if (fan_state == FAN_ON_HUMI) led_colour[2]=magenta;
 				  else led_colour[2]=orange;
 
-				if(humidity<60) led_colour[2]=green;
-				  else led_colour[2]=deep_blue;
+				if(humidity<60) led_colour[3]=green;
+				  else led_colour[3]=deep_blue;
 
 
 			   strip.setPixelColor(0,led_colour[led_num]);
-			   led_num=(led_num<3)?led_num++:0;
+			   led_num++;
+			   if (led_num==4) led_num=0;
 			   strip.show();
 
 			
