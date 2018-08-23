@@ -148,7 +148,7 @@ void setup()
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.14");
+    Serial.println("Verion 2.15");
    
 	strip.begin();
 
