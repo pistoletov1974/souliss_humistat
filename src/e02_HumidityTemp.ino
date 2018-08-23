@@ -80,7 +80,7 @@ uint8_t ip_address[4] = {192, 168, 0, 78};
 uint8_t subnet_mask[4] = {255, 255, 255, 0};
 uint8_t ip_gateway[4] = {192, 168, 0, 1};
 uint8_t hour = 23;
-uint32_t led_colour[4];
+//uint32_t led_colour[4];
 uint8_t  led_num=0;
 
 enum states
@@ -100,12 +100,12 @@ float humidity_prev = 0;
 #define myvNet_subnet 0xFF00
 EthernetUDP Udp;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, pixel_pin, NEO_GRB + NEO_KHZ800);
-const PROGMEM uint32_t magenta = strip.Color(255, 0, 255);
-const PROGMEM uint32_t yellow = strip.Color(255, 255, 0); 
-const PROGMEM uint32_t white = strip.Color(255, 255, 255);
-const PROGMEM uint32_t deep_blue = strip.Color(51, 51, 255);
-const PROGMEM uint32_t orange = strip.Color(255, 128, 0);
-const PROGMEM uint32_t green = strip.Color(50, 205, 50);
+//const PROGMEM uint32_t magenta = strip.Color(255, 0, 255);
+//const PROGMEM uint32_t yellow = strip.Color(255, 255, 0); 
+//const PROGMEM uint32_t white = strip.Color(255, 255, 255);
+//const PROGMEM uint32_t deep_blue = strip.Color(51, 51, 255);
+//const PROGMEM uint32_t orange = strip.Color(255, 128, 0);
+//const PROGMEM uint32_t green = strip.Color(50, 205, 50);
 
 
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
@@ -151,14 +151,11 @@ void setup()
     Serial.println("Verion 2.14");
    
 	strip.begin();
-	strip.show();
+
 	strip.setPixelColor(0,strip.Color(255,179,0)); //RGB
 	strip.show();
 	delay(2000);
-    led_colour[0]=white;
-	led_colour[1]=green;
-	led_colour[2]=green;
-	led_colour[3]=green;
+
 
 	if (Udp.parsePacket())
 	{
@@ -189,17 +186,14 @@ void setup()
 		hour = (epoch % 86400L) / 3600 + 3;
 		// print the hour (86400 equals secs per day)
 		Serial.println(hour);
-		if (hour>7 && hour<23)
-		strip.setPixelColor(0,strip.Color(0,90,0));
-		else strip.setPixelColor(0,strip.Color(255,242,0)); 
-		strip.show();
-	} else {
+		
+	} 
+	else {
 		strip.setPixelColor(0,strip.Color(200,0,0));
 		strip.show();
 	}
 	mInput(AirWick)=Souliss_T1n_OnCmd;
-	strip.setPixelColor(0,strip.Color(90,90,90)); 
-	strip.show();
+
 	
 }  
 
@@ -282,13 +276,12 @@ void loop()
 		   if ((hour>7)&&(hour<23) && (mOutput(FAN_HIGH)==Souliss_T1n_OffCoil) && (dead_time==0) )  {
 		   
 		   light_state=digitalRead(light_pin);
-		   if ((light_state==LOW) && (light_state!=light_state_prev)) {
+		   if ((light_state==LOW) && (light_state!=light_state_prev)) 
+		   {
                      mInput(AirWick)=Souliss_T1n_OnCmd;
 					 dead_time=1;
-
 		   }
-		       	
-             
+		       	             
 		    light_state_prev=light_state;	
 				   
 		   }
@@ -309,24 +302,52 @@ void loop()
 		 {
                // led colours rotation (see readme.md)
 			   Serial.println(led_num);
-			   if ((hour>7) && (hour<23)) led_colour[1]=green;
-                     else led_colour[1]=yellow;
 
 
-			    if (fan_state == FAN_ON_HUMI) led_colour[2]=magenta;
-				  else led_colour[2]=orange;
 
-				if(humidity<60) led_colour[3]=green;
-				  else led_colour[3]=deep_blue;
+			 
 
 
-			   strip.setPixelColor(0,led_colour[led_num]);
+
+
+
+			   switch (led_num)
+			   
+			    {
+                       case 0:
+                       strip.setPixelColor(0,255,255,255); //white
+                       break;
+					   
+					   case 1:
+					   if ((hour>=7) && (hour<=23)) strip.setPixelColor(0,50,205,50);       //green
+                            else strip.setPixelColor(0,255,255,0);                         //yellow
+					   break;
+
+					   case 2:
+					   if (fan_state == FAN_ON_HUMI)  strip.setPixelColor(0,255,0,255);     // magenta
+				           else  strip.setPixelColor(0,255,128,0);                          //orange;
+					  break;
+
+					  case 3:
+					    if(humidity < 50) strip.setPixelColor(0,50,205,50);                //green
+				           else  strip.setPixelColor(0,51,51,255);                         //deep blue					  
+					  break;
+
+					  default:
+                             strip.setPixelColor(0,0,0,0);
+					  break;
+
+			   }			
+
+			
 			   led_num++;
 			   if (led_num==4) led_num=0;
 			   strip.show();
-
-			
 		 }
+
+
+
+
 
 		// Process the other Gateway stuffs
 		FAST_GatewayComms();
