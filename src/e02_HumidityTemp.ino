@@ -148,7 +148,7 @@ void setup()
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.15");
+    Serial.println("Verion 2.16");
    
 	strip.begin();
 
@@ -222,12 +222,12 @@ void loop()
 
 				if (hour > 7 && hour < 23)
 				{
-					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_HIGH, 30000UL);
+					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_HIGH, 40000UL);
 					
 				}
 
 				else
-					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_LOW, 30000UL);
+					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_LOW, 40000UL);
 			}
 
 			//Souliss_DigInHold(5, Souliss_T1n_OffCmd, Souliss_T1n_OnCmd, LIGHT, 10000);
@@ -341,7 +341,8 @@ void loop()
 
 			
 			   led_num++;
-			   if (led_num==4) led_num=0;
+			   led_num=led_num & 0x03;
+			  // if (led_num==4) led_num=0;
 			   strip.show();
 		 }
 
