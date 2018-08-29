@@ -298,18 +298,10 @@ void loop()
 		
 
 
-		FAST_2110ms()
+		FAST_1110ms()
 		 {
                // led colours rotation (see readme.md)
 			   Serial.println(led_num);
-
-
-
-			 
-
-
-
-
 
 			   switch (led_num)
 			   
@@ -433,7 +425,7 @@ void loop()
 			}
 		}
 
-        SLOW_510s()
+        SLOW_x10s(3)
 		 {
            dead_time=0; 
 		}
