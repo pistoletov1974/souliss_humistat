@@ -148,7 +148,7 @@ void setup()
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.16");
+    Serial.println("Verion 2.17");
    
 	strip.begin();
 
@@ -325,12 +325,16 @@ void loop()
 
 					   case 2:
 					   if (fan_state == FAN_ON_HUMI)  strip.setPixelColor(0,255,0,255);     // magenta
-				           else  strip.setPixelColor(0,255,128,0);                          //orange;
+				           else  {
+						        if (mOutput(FAN_HIGH)==Souliss_T1n_OnCoil) 
+								   strip.setPixelColor(0,120,30,30);  //dark red
+						             else   strip.setPixelColor(0,255,128,0);      
+									 }                   //orange;
 					  break;
 
 					  case 3:
-					    if(humidity < 50) strip.setPixelColor(0,50,205,50);                //green
-				           else  strip.setPixelColor(0,51,51,255);                         //deep blue					  
+					  
+						strip.setPixelColor(0, 10, 255-(uint8_t)(humidity*2),(uint8_t)(humidity*2));                      					  
 					  break;
 
 					  default:
