@@ -298,7 +298,7 @@ void loop()
 		
 
 
-		FAST_1110ms()
+		FAST_2110ms()
 		 {
                // led colours rotation (see readme.md)
 			   Serial.println(led_num);
@@ -319,7 +319,7 @@ void loop()
 					   if (fan_state == FAN_ON_HUMI)  strip.setPixelColor(0,255,0,255);     // magenta
 				           else  {
 						        if (mOutput(FAN_HIGH)==Souliss_T1n_OnCoil) 
-								   strip.setPixelColor(0,120,30,30);  //dark red
+								   strip.setPixelColor(0,150,10,10);  //dark red
 						             else   strip.setPixelColor(0,255,128,0);      
 									 }                   //orange;
 					  break;
