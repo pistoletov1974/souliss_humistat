@@ -40,8 +40,8 @@
 #include <Adafruit_NeoPixel.h>
 
 //debug mode
-//#define SERIALPORT_INSKETCH
-//#define LOG Serial
+#define SERIALPORT_INSKETCH
+#define LOG Serial
 
 // Include sensor libraries (from Adafruit) Uncomment whatever type you're using!
 //#define DHTTYPE DHT11   // DHT 11
@@ -68,8 +68,8 @@
 #define LIGHT 6
 #define HUMISET 8
 #define Cold_Valve 10
-#define NEO_PIXEL  11
-#define AirWick    15 
+//#define NEO_PIXEL  12
+#define AirWick    11 
 
 
 
@@ -82,6 +82,7 @@ uint8_t ip_gateway[4] = {192, 168, 0, 1};
 uint8_t hour = 23;
 //uint32_t led_colour[4];
 uint8_t  led_num=0;
+
 
 enum states
 {
@@ -100,12 +101,7 @@ float humidity_prev = 0;
 #define myvNet_subnet 0xFF00
 EthernetUDP Udp;
 Adafruit_NeoPixel strip = Adafruit_NeoPixel(1, pixel_pin, NEO_GRB + NEO_KHZ800);
-//const PROGMEM uint32_t magenta = strip.Color(255, 0, 255);
-//const PROGMEM uint32_t yellow = strip.Color(255, 255, 0); 
-//const PROGMEM uint32_t white = strip.Color(255, 255, 255);
-//const PROGMEM uint32_t deep_blue = strip.Color(51, 51, 255);
-//const PROGMEM uint32_t orange = strip.Color(255, 128, 0);
-//const PROGMEM uint32_t green = strip.Color(50, 205, 50);
+
 
 
 const int NTP_PACKET_SIZE = 48; // NTP time stamp is in the first 48 bytes of the message
@@ -137,8 +133,8 @@ void setup()
 	Set_DigitalInput(LIGHT);
 	Set_Humidity_Setpoint(HUMISET);
 	Set_T22(Cold_Valve);
-	Set_T16(NEO_PIXEL);
-	Set_T14(AirWick);
+//	Set_T16(NEO_PIXEL);
+ 	Set_T14(AirWick);
 
 
 
@@ -148,13 +144,14 @@ void setup()
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.17");
+    Serial.println("Verion 2.18");
    
 	strip.begin();
 
 	strip.setPixelColor(0,strip.Color(255,179,0)); //RGB
 	strip.show();
 	delay(2000);
+
 
 
 	if (Udp.parsePacket())
@@ -214,7 +211,7 @@ void loop()
 
 		}
 
-		FAST_50ms()
+		FAST_90ms()
 		{
 
 			if (fan_state != FAN_ON_HUMI)
@@ -222,12 +219,12 @@ void loop()
 
 				if (hour > 7 && hour < 23)
 				{
-					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_HIGH, 40000UL);
+					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 4, FAN_HIGH, 50000UL);
 					
 				}
 
 				else
-					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 5, FAN_LOW, 40000UL);
+					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 4, FAN_LOW, 60000UL);
 			}
 
 			//Souliss_DigInHold(5, Souliss_T1n_OffCmd, Souliss_T1n_OnCmd, LIGHT, 10000);
@@ -244,12 +241,10 @@ void loop()
 			DigOut(4, Souliss_T1n_Coil, FAN_LOW);
 			DigOut(9, Souliss_T1n_Coil, FAN_HIGH);
 			DigOut(8,Souliss_T1n_OnCoil,AirWick);
-			Logic_T16(NEO_PIXEL);
+			//Logic_T16(NEO_PIXEL);
 		}
 
-		FAST_90ms()
-		{
-		}
+	
 
 		// пїЅпїЅпїЅпїЅпїЅпїЅ  пїЅ 10 пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
 		FAST_11110ms()
@@ -266,6 +261,7 @@ void loop()
 		{
 				
 				Timer_T22(Cold_Valve);
+				LowDigIn(5,Souliss_T1n_OnCmd,AirWick);
 			
 
 		}
@@ -289,10 +285,7 @@ void loop()
 		 }
 
 
-		FAST_510ms()
-		{
-			LowDigIn(5,Souliss_T1n_OnCmd,AirWick);
-		}
+
 
 
 		
@@ -326,7 +319,7 @@ void loop()
 
 					  case 3:
 					  
-						strip.setPixelColor(0, 10, 255-(uint8_t)(humidity*2),(uint8_t)(humidity*2));                      					  
+						strip.setPixelColor(0,  255-(uint8_t)((humidity/20*20))*2, (uint8_t)((humidity/20*20))*2 ,(uint8_t)((humidity/20*20))*2 );                      					  
 					  break;
 
 					  default:
