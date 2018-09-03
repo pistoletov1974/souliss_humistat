@@ -31,6 +31,7 @@
 #include "conf/Gateway.h"		   // The main node is the Gateway, we have just one node
 #include "conf/SmallNetwork.h"
 #include "user/float16.h"
+#include <avr/wdt.h>
 // Enable DHCP and DNS
 
 // Include framework code and libraries
@@ -139,12 +140,12 @@ void setup()
 
 
 	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-
+    wdt_enable(WDTO_8S);
 	sendNTPpacket();
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.18");
+    Serial.println("Verion 2.2");
    
 	strip.begin();
 
@@ -328,7 +329,7 @@ void loop()
 
 			   }			
 
-			
+			   wdt_reset();
 			   led_num++;
 			   led_num=led_num & 0x03;
 			  // if (led_num==4) led_num=0;
