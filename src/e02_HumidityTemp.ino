@@ -31,6 +31,7 @@
 #include "conf/Gateway.h"		   // The main node is the Gateway, we have just one node
 #include "conf/SmallNetwork.h"
 #include "user/float16.h"
+#include <avr/wdt.h>
 // Enable DHCP and DNS
 
 // Include framework code and libraries
@@ -139,12 +140,12 @@ void setup()
 
 
 	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-
+    wdt_enable(WDTO_8S);
 	sendNTPpacket();
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.18");
+    Serial.println("Verion 2.2");
    
 	strip.begin();
 
@@ -291,7 +292,7 @@ void loop()
 		
 
 
-		FAST_2110ms()
+		FAST_1110ms()
 		 {
                // led colours rotation (see readme.md)
 			   Serial.println(led_num);
@@ -312,7 +313,7 @@ void loop()
 					   if (fan_state == FAN_ON_HUMI)  strip.setPixelColor(0,255,0,255);     // magenta
 				           else  {
 						        if (mOutput(FAN_HIGH)==Souliss_T1n_OnCoil) 
-								   strip.setPixelColor(0,150,10,10);  //dark red
+								   strip.setPixelColor(0,120,30,30);  //dark red
 						             else   strip.setPixelColor(0,255,128,0);      
 									 }                   //orange;
 					  break;
@@ -328,7 +329,7 @@ void loop()
 
 			   }			
 
-			
+			   wdt_reset();
 			   led_num++;
 			   led_num=led_num & 0x03;
 			  // if (led_num==4) led_num=0;
@@ -380,9 +381,9 @@ void loop()
 			//if (!isnan(humidity) || !isnan(temperature)) {
 			ImportAnalog(HUMIDITY, &humidity);
 			ImportAnalog(TEMP0, &temperature);
-      Serial.print("TEMP HUMI:,");
+             Serial.print("TEMP HUMI:,");
 			Serial.print(temperature);
-      Serial.print(",");
+            Serial.print(",");
 			Serial.println(humidity);
 			Logic_Humidity(HUMIDITY);
 			//Serial.println(Souliss_SinglePrecisionFloating(&mOutput((HUMIDITY))));
