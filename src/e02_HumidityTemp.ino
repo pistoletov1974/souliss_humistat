@@ -118,7 +118,7 @@ void setup()
 
 	SetAsGateway(myvNet_address); // Set this node as gateway for SoulissApp
 	Udp.begin(8888);
-	Serial.begin(9600);
+	Serial.begin(57600);
 	dht.begin(); // initialize temperature sensor
 	
 	 
@@ -295,7 +295,10 @@ void loop()
 		FAST_1110ms()
 		 {
                // led colours rotation (see readme.md)
-			   Serial.println(led_num);
+			   Serial.print("ST:");
+			   Serial.print(led_num);
+			   Serial.print(";");
+			   Serial.println(millis());
 
 			   switch (led_num)
 			   
@@ -346,7 +349,9 @@ void loop()
 	EXECUTESLOW()
 	{
 		UPDATESLOW();
-
+        
+		Serial.print("sl_in:"); 
+		Serial.println(millis());
 		SLOW_10s()
 		{
 
@@ -470,6 +475,9 @@ void loop()
 
 			}
 		}
+		
+		Serial.print("sl_out:");
+		Serial.println(millis());
 	}
 }
 
