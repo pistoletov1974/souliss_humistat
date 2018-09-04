@@ -134,7 +134,7 @@ void setup()
 	Set_DigitalInput(LIGHT);
 	Set_Humidity_Setpoint(HUMISET);
 	Set_T22(Cold_Valve);
-//	Set_T16(NEO_PIXEL);
+ //	Set_T16(NEO_PIXEL);
  	Set_T14(AirWick);
 
 
