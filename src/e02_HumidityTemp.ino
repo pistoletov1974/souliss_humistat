@@ -41,8 +41,8 @@
 #include <Adafruit_NeoPixel.h>
 
 //debug mode
-#define SERIALPORT_INSKETCH
-#define LOG Serial
+//#define SERIALPORT_INSKETCH
+//#define LOG Serial
 
 // Include sensor libraries (from Adafruit) Uncomment whatever type you're using!
 //#define DHTTYPE DHT11   // DHT 11
@@ -298,7 +298,7 @@ void loop()
 			   Serial.print("ST:");
 			   Serial.print(led_num);
 			   Serial.print(";");
-			   Serial.println(millis());
+			   Serial.print(millis());
 
 			   switch (led_num)
 			   
@@ -337,6 +337,7 @@ void loop()
 			   led_num=led_num & 0x03;
 			  // if (led_num==4) led_num=0;
 			   strip.show();
+	
 		 }
 
 
