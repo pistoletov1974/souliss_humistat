@@ -292,13 +292,13 @@ void loop()
 		
 
 
-		FAST_1110ms()
+		FAST_2110ms()
 		 {
                // led colours rotation (see readme.md)
 			   Serial.print("ST:");
 			   Serial.print(led_num);
 			   Serial.print(";");
-			   Serial.print(millis());
+			   Serial.println(millis());
 
 			   switch (led_num)
 			   
