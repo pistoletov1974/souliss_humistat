@@ -305,11 +305,13 @@ void loop()
 			    {
                        case 0:
                        strip.setPixelColor(0,255,255,255); //white
+					   strip.setBrightness(255); 
                        break;
 					   
 					   case 1:
 					   if ((hour>=7) && (hour<=23)) strip.setPixelColor(0,50,205,50);       //green
-                            else strip.setPixelColor(0,255,255,0);                         //yellow
+                            else strip.setPixelColor(0,255,255,0);   
+							strip.setBrightness(255);                      //yellow
 					   break;
 
 					   case 2:
@@ -319,11 +321,13 @@ void loop()
 								   strip.setPixelColor(0,120,30,30);  //dark red
 						             else   strip.setPixelColor(0,255,128,0);      
 									 }                   //orange;
+									 strip.setBrightness(100); 
 					  break;
 
 					  case 3:
 					  
-						strip.setPixelColor(0,  255-(uint8_t)((humidity/20*20))*2, (uint8_t)((humidity/20*20))*2 ,(uint8_t)((humidity/20*20))*2 );                      					  
+						strip.setPixelColor(0,  255-(uint8_t)((humidity/20*20))*2, 255-(uint8_t)((humidity/20*20))*2 ,(uint8_t)((humidity/20*20))*2 );   
+						strip.setBrightness(50);                   					  
 					  break;
 
 					  default:
