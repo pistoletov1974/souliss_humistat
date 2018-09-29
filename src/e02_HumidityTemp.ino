@@ -95,6 +95,7 @@ states fan_state = FAN_OFF;
 const int light_pin = 5;
 uint8_t light_state=0, light_state_prev=0;
 uint8_t dead_time=0;
+uint8_t humi_light;
 
 float humidity = 0;
 float humidity_prev = 0;
@@ -145,7 +146,7 @@ void setup()
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.3");
+    Serial.println("Verion 2.5");
    
 	strip.begin();
 
@@ -218,7 +219,7 @@ void loop()
 			if (fan_state != FAN_ON_HUMI)
 			{
 
-				if (hour > 7 && hour < 23)
+				if (hour >= 7 && hour <= 23)
 				{
 					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 4, FAN_HIGH, 50000UL);
 					
@@ -295,10 +296,10 @@ void loop()
 		FAST_2110ms()
 		 {
                // led colours rotation (see readme.md)
-			   Serial.print("ST:");
-			   Serial.print(led_num);
-			   Serial.print(";");
-			   Serial.println(millis());
+			   //Serial.print("ST:");
+			   //Serial.print(led_num);
+			   //Serial.print(";");
+			   //Serial.println(millis());
 
 			   switch (led_num)
 			   
@@ -318,16 +319,16 @@ void loop()
 					   if (fan_state == FAN_ON_HUMI)  strip.setPixelColor(0,255,0,255);     // magenta
 				           else  {
 						        if (mOutput(FAN_HIGH)==Souliss_T1n_OnCoil) 
-								   strip.setPixelColor(0,120,30,30);  //dark red
+								   strip.setPixelColor(0,150,10,10);  //dark red
 						             else   strip.setPixelColor(0,255,128,0);      
 									 }                   //orange;
-									 strip.setBrightness(100); 
+									 strip.setBrightness(255); 
 					  break;
 
 					  case 3:
 					  
-						strip.setPixelColor(0,  255-(uint8_t)((humidity/20*20))*2, 255-(uint8_t)((humidity/20*20))*2 ,(uint8_t)((humidity/20*20))*2 );   
-						strip.setBrightness(50);                   					  
+						strip.setPixelColor(0,  0, 255-(uint8_t)(((humi_light/20)*20)*2.5) ,(uint8_t)(((humi_light/20)*20)*2.5) );   
+						strip.setBrightness(70);                   					  
 					  break;
 
 					  default:
@@ -355,8 +356,8 @@ void loop()
 	{
 		UPDATESLOW();
         
-		Serial.print("sl_in:"); 
-		Serial.println(millis());
+		//Serial.print("sl_in:"); 
+		//Serial.println(millis());
 		SLOW_10s()
 		{
 
@@ -387,6 +388,7 @@ void loop()
 		{
 
 			humidity = dht.readHumidity();
+			humi_light=(uint8_t)(humidity) ;
 			float temperature = dht.readTemperature(false);
 			//if (!isnan(humidity) || !isnan(temperature)) {
 			ImportAnalog(HUMIDITY, &humidity);
@@ -394,6 +396,8 @@ void loop()
              Serial.print("TEMP HUMI:,");
 			Serial.print(temperature);
             Serial.print(",");
+			Serial.print((uint8_t)(((humi_light/20)*20)*2.5));
+			Serial.print(",");
 			Serial.println(humidity);
 			Logic_Humidity(HUMIDITY);
 			//Serial.println(Souliss_SinglePrecisionFloating(&mOutput((HUMIDITY))));
@@ -481,8 +485,8 @@ void loop()
 			}
 		}
 		
-		Serial.print("sl_out:");
-		Serial.println(millis());
+		//Serial.print("sl_out:");
+		//Serial.println(millis());
 	}
 }
 
