@@ -112,7 +112,7 @@ byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packe
 void setup()
 {
 	Initialize();
-
+    wdt_disable();
 	// Get the IP address from DHCP
 	Souliss_SetIPAddress(ip_address, subnet_mask, ip_gateway);
 
@@ -140,12 +140,12 @@ void setup()
 
 
 	//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-    wdt_enable(WDTO_8S);
+   
 	sendNTPpacket();
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.3");
+    Serial.println("Verion 2.4");
    
 	strip.begin();
 
@@ -191,7 +191,7 @@ void setup()
 		strip.show();
 	}
 	mInput(AirWick)=Souliss_T1n_OnCmd;
-
+     wdt_enable(WDTO_8S);
 	
 }  
 
@@ -224,8 +224,7 @@ void loop()
 					
 				}
 
-				else
-					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 4, FAN_LOW, 60000UL);
+			
 			}
 
 			//Souliss_DigInHold(5, Souliss_T1n_OffCmd, Souliss_T1n_OnCmd, LIGHT, 10000);
@@ -405,14 +404,11 @@ void loop()
 				fan_state = FAN_ON_HUMI;
 				//Serial.println(fan_state);
 
-				if (hour > 7 && hour < 23)
+				if (hour >= 7 && hour <= 23)
 				{
 					mInput(FAN_HIGH) = Souliss_T1n_OnCmd;
 				}
-				else
-				{
-					mInput(FAN_LOW) = Souliss_T1n_OnCmd;
-				}
+		
 
 			} // if humidity
 
@@ -420,10 +416,10 @@ void loop()
 			if (humidity < 75 && fan_state == FAN_ON_HUMI)
 			{
 
-				mInput(FAN_HIGH) = Souliss_T1n_OffCmd;
-				mInput(FAN_LOW) = 0x30 + 6 * 15;
+				mInput(FAN_HIGH) = 0x30 + 6 * 1;
+				
 				fan_state = FAN_OFF;
-				mInput(AirWick)=Souliss_T1n_OnCmd;
+			
 				dead_time=1;
 				// 7 пїЅпїЅпїЅпїЅпїЅ
 			}
