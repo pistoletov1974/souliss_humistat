@@ -38,7 +38,7 @@ Used Pins:
 3-8
 4-gnd
  led_array
- Led[0] - always wite
- led[1] - day(green) nigh (yellow)
- led[2] - fan_humi off (green) on (orange)
- led[3] -   humi < 60 (green)  > deep_blue
+ Led[0] - always white
+ led[1] - day(green) night (yellow)
+ led[2] - fan_state off On on_humi
+ led[3] -   humi state from green to blue
