@@ -93,9 +93,11 @@ enum states
 };
 states fan_state = FAN_OFF;
 const int light_pin = 5;
-uint8_t light_state=0, light_state_prev=0;
+uint8_t light_state=1, light_state_prev=1;
 uint8_t dead_time=0;
 uint8_t humi_light;
+uint8_t isDay=0;
+uint8_t light_on_cycles;
 
 float humidity = 0;
 float humidity_prev = 0;
@@ -146,7 +148,7 @@ void setup()
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.6");
+    Serial.println("Verion 2.7");
    
 	strip.begin();
 
@@ -185,6 +187,8 @@ void setup()
 		hour = (epoch % 86400L) / 3600 + 3;
 		// print the hour (86400 equals secs per day)
 		Serial.println(hour);
+		if ((hour>=7)&&(hour<=21)) isDay=1;
+		  else isDay=0; 
 		
 	} 
 	else {
@@ -213,20 +217,33 @@ void loop()
 
 		}
 
-		FAST_90ms()
+		FAST_210ms()
 		{
 
-			if (fan_state != FAN_ON_HUMI)
-			{
 
-				if (hour >= 7 && hour <= 23)
-				{
-					LowDigInHoldCustom(5, Souliss_T1n_OffCmd, 0x30 + 6 * 4, FAN_HIGH, 50000UL);
-					
-				}
 
-			
-			}
+       light_state=digitalRead(light_pin);
+
+			 if ((light_state==0)&&(light_state_prev==1)) 
+			 {
+				 light_on_cycles=0; //reset cycles
+			 }
+
+			 if ((light_state==0)&&(light_state_prev==0)) {
+				 light_on_cycles++;
+			 }
+
+			 if (light_state==1) light_on_cycles=0; 
+
+			 if ((light_on_cycles==200) && (isDay==1) && (fan_state!=FAN_ON_HUMI)) {
+             mInput(FAN_HIGH) = 0x30 + 6*4 ;
+						 light_on_cycles=0;
+			 }
+       light_state_prev=light_state; 
+
+
+
+
 
 			//Souliss_DigInHold(5, Souliss_T1n_OffCmd, Souliss_T1n_OnCmd, LIGHT, 10000);
 
@@ -239,7 +256,7 @@ void loop()
 			Logic_T22(Cold_Valve);
 			DigOut(Valve_Open_PIN,Souliss_T2n_Coil_Open,Cold_Valve);
 			DigOut(Valve_Close_PIN,Souliss_T2n_Coil_Close,Cold_Valve);
-			DigOut(4, Souliss_T1n_Coil, FAN_LOW);
+		//	DigOut(4, Souliss_T1n_Coil, FAN_LOW);
 			DigOut(9, Souliss_T1n_Coil, FAN_HIGH);
 			DigOut(8,Souliss_T1n_OnCoil,AirWick);
 			//Logic_T16(NEO_PIXEL);
@@ -252,7 +269,7 @@ void loop()
 		{
 
 			Timer_SimpleLight(FAN_HIGH);
-			Timer_SimpleLight(FAN_LOW);
+			//Timer_SimpleLight(FAN_LOW);
 			
 		
 		}
@@ -309,9 +326,9 @@ void loop()
                        break;
 					   
 					   case 1:
-					   if ((hour>=7) && (hour<=23)) strip.setPixelColor(0,50,205,50);       //green
-                            else strip.setPixelColor(0,255,255,0);   
-							strip.setBrightness(255);                      //yellow
+					   if (isDay==1)  strip.setPixelColor(0,50,205,50);       //green
+                            else strip.setPixelColor(0,0,0,150);   
+							strip.setBrightness(255);                      //blue
 					   break;
 
 					   case 2:
@@ -476,6 +493,9 @@ void loop()
 				Serial.println(hour);
 				if (hour==7)  
 				   	mInput(AirWick)=Souliss_T1n_OnCmd;
+
+						if ((hour>=7)&&(hour<=21)) isDay=1;
+		          else isDay=0; 		 
 
 
 			}
