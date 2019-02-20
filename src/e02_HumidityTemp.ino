@@ -197,7 +197,7 @@ void setup()
 	}
 	mInput(AirWick)=Souliss_T1n_OnCmd;
      wdt_enable(WDTO_8S);
-		 Serial.print("millis STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE, Airwick:,");
+		 Serial.println("millis STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE, Airwick:,");
 	
 }  
 
