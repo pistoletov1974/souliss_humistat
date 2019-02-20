@@ -148,7 +148,7 @@ void setup()
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.8");
+    Serial.println("Verion 2.8.1");
    
 	strip.begin();
 
@@ -416,6 +416,15 @@ void loop()
 			humidity = dht.readHumidity();
 			humi_light=(uint8_t)(humidity) ;
 			float temperature = dht.readTemperature(false);
+            //halt for reset 
+      			if ( isnan(humidity) || isnan(temperature) ) {
+			           while(1){
+									 /* code */
+								 };
+			}
+
+
+
 			//if (!isnan(humidity) || !isnan(temperature)) {
 			ImportAnalog(HUMIDITY, &humidity);
 			ImportAnalog(TEMP0, &temperature);
