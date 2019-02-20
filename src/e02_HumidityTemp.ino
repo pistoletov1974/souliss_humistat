@@ -148,7 +148,7 @@ void setup()
 
 	Serial.println("packet sent");
 
-    Serial.println("Verion 2.7");
+    Serial.println("Verion 2.8");
    
 	strip.begin();
 
@@ -197,6 +197,7 @@ void setup()
 	}
 	mInput(AirWick)=Souliss_T1n_OnCmd;
      wdt_enable(WDTO_8S);
+		 Serial.print("millis STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE, Airwick:,");
 	
 }  
 
@@ -228,18 +229,26 @@ void loop()
 			 {
 				 light_on_cycles=0; //reset cycles
 			 }
-
+       // if light lighting
 			 if ((light_state==0)&&(light_state_prev==0)) {
 				 light_on_cycles++;
 			 }
 
-			 if (light_state==1) light_on_cycles=0; 
+			 
+			 
 
 			 if ((light_on_cycles==200) && (isDay==1) && (fan_state!=FAN_ON_HUMI)) {
              mInput(FAN_HIGH) = 0x30 + 6*4 ;
 						 light_on_cycles=0;
 			 }
-       light_state_prev=light_state; 
+      
+			// light off for short time
+      if  ((light_state==1) && (light_state_prev==0) && (light_on_cycles<50))
+             mInput(FAN_HIGH)= Souliss_T1n_OffCmd;
+       
+			 // reset counter if light OFF
+			 if (light_state==1) light_on_cycles=0; 
+			 light_state_prev=light_state; 
 
 
 
@@ -248,7 +257,7 @@ void loop()
 			//Souliss_DigInHold(5, Souliss_T1n_OffCmd, Souliss_T1n_OnCmd, LIGHT, 10000);
 
 			Logic_SimpleLight(FAN_HIGH);
-			Logic_SimpleLight(FAN_LOW);
+			//Logic_SimpleLight(FAN_LOW);
 
 			//Logic_Humidity_Setpoint(HUMISET);
 			Logic_Humidity(HUMIDITY);
@@ -377,7 +386,8 @@ void loop()
 		SLOW_10s()
 		{
 
-			Serial.print("STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE, Airwick:,");
+			Serial.print(millis());
+			Serial.print(",");
 			Serial.print(mInput(FAN_HIGH));
 			Serial.print(mOutput(FAN_HIGH));
 			Serial.print(mAuxiliary(FAN_HIGH));
