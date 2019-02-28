@@ -147,8 +147,8 @@ void setup()
 	sendNTPpacket();
 
 	Serial.println("packet sent");
-
-    Serial.println("Verion 2.8.1");
+    //TODO: change version
+    Serial.println("Verion 2.8.2");
    
 	strip.begin();
 
@@ -286,7 +286,7 @@ void loop()
         // default time 0xC0-0xA0 * 210 ms app 6 sec
 		FAST_210ms()
 		{
-				
+				//TODO: remove timers to another cycles
 				Timer_T22(Cold_Valve);
 				LowDigIn(5,Souliss_T1n_OnCmd,AirWick);
 			
@@ -295,7 +295,8 @@ void loop()
 
 	      	FAST_710ms()
 		 {
-           // airwick work only in day if light goes on and fan_high not run
+           //TODO: fix conflict with another fast 210 cycle for airwick && light
+					 // airwick work only in day if light goes on and fan_high not run
 		   if ((hour>7)&&(hour<23) && (mOutput(FAN_HIGH)==Souliss_T1n_OffCoil) && (dead_time==0) )  {
 		   
 		   light_state=digitalRead(light_pin);
