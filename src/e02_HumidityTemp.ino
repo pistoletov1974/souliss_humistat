@@ -149,7 +149,7 @@ void setup()
 
 	Serial.println("packet sent");
     //TODO: change version
-    Serial.println("Verion 2.8.3");
+    Serial.println("Verion 2.8.4");
    
 	strip.begin();
 
@@ -296,7 +296,7 @@ void loop()
 
 		} */
 
-	      	FAST_910ms()
+	      	FAST_510ms()
 		 {
            //TODO: fix conflict with another fast 210 cycle for airwick && light
 					 // airwick work only in day if light goes on and fan_high not run
