@@ -147,11 +147,7 @@ void setup()
 	sendNTPpacket();
 
 	Serial.println("packet sent");
-<<<<<<< HEAD
-
-=======
     //TODO: change version
->>>>>>> 123bcf67360c08cabfae8189ba4b9135afabc0be
     Serial.println("Verion 2.8.2");
    
 	strip.begin();
