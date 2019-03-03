@@ -98,6 +98,7 @@ uint8_t dead_time=0;
 uint8_t humi_light;
 uint8_t isDay=0;
 uint8_t light_on_cycles;
+uint8_t cycle_state=0;
 
 float humidity = 0;
 float humidity_prev = 0;
@@ -148,7 +149,7 @@ void setup()
 
 	Serial.println("packet sent");
     //TODO: change version
-    Serial.println("Verion 2.8.2");
+    Serial.println("Verion 2.8.3");
    
 	strip.begin();
 
@@ -156,8 +157,7 @@ void setup()
 	strip.show();
 	delay(2000);
 
-
-
+	
 	if (Udp.parsePacket())
 	{
 		// We've received a packet, read the data from it
@@ -195,8 +195,8 @@ void setup()
 		strip.setPixelColor(0,strip.Color(200,0,0));
 		strip.show();
 	}
-	mInput(AirWick)=Souliss_T1n_OnCmd;
-     wdt_enable(WDTO_8S);
+	//mInput(AirWick)=Souliss_T1n_OnCmd;
+     wdt_enable(WDTO_1S);
 		 Serial.println("millis STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE, Airwick:,");
 	
 }  
@@ -220,7 +220,7 @@ void loop()
 
 		FAST_210ms()
 		{
-
+         wdt_reset(); 
 
 
        light_state=digitalRead(light_pin);
@@ -269,6 +269,10 @@ void loop()
 			DigOut(9, Souliss_T1n_Coil, FAN_HIGH);
 			DigOut(8,Souliss_T1n_OnCoil,AirWick);
 			//Logic_T16(NEO_PIXEL);
+
+	        Timer_T22(Cold_Valve);
+			LowDigIn(5,Souliss_T1n_OnCmd,AirWick);
+
 		}
 
 	
@@ -284,20 +288,19 @@ void loop()
 		}
 
         // default time 0xC0-0xA0 * 210 ms app 6 sec
-		FAST_210ms()
+	/*	FAST_210ms()
 		{
 				//TODO: remove timers to another cycles
-				Timer_T22(Cold_Valve);
-				LowDigIn(5,Souliss_T1n_OnCmd,AirWick);
+			
 			
 
-		}
+		} */
 
-	      	FAST_710ms()
+	      	FAST_910ms()
 		 {
            //TODO: fix conflict with another fast 210 cycle for airwick && light
 					 // airwick work only in day if light goes on and fan_high not run
-		   if ((hour>7)&&(hour<23) && (mOutput(FAN_HIGH)==Souliss_T1n_OffCoil) && (dead_time==0) )  {
+		       /* if ((hour>7)&&(hour<23) && (mOutput(FAN_HIGH)==Souliss_T1n_OffCoil) && (dead_time==0) )  {
 		   
 		   light_state=digitalRead(light_pin);
 		   if ((light_state==LOW) && (light_state!=light_state_prev)) 
@@ -308,7 +311,7 @@ void loop()
 		       	             
 		    light_state_prev=light_state;	
 				   
-		   }
+		   } */
 		   Logic_T14(AirWick);
 		 }
 
@@ -363,7 +366,7 @@ void loop()
 
 			   }			
 
-			   wdt_reset();
+			  
 			   led_num++;
 			   led_num=led_num & 0x03;
 			  // if (led_num==4) led_num=0;
@@ -471,15 +474,20 @@ void loop()
            dead_time=0; 
 		}
 
-		SLOW_15m()
+		SLOW_110s()
 		{
 
+
+			if (cycle_state==0) {  
+			  
 			sendNTPpacket();
+			cycle_state=1;
+			}
 
 			//Serial.println("packet sent");
             
-			delay(2000);
-
+			else {  
+      cycle_state=0;  
 			if (Udp.parsePacket())
 			{
 				// We've received a packet, read the data from it
@@ -517,8 +525,9 @@ void loop()
 						if ((hour>=7)&&(hour<=21)) isDay=1;
 		          else isDay=0; 		 
 
-
-			}
+			} // if parsePacket
+			
+			} //else
 		}
 		
 		//Serial.print("sl_out:");
