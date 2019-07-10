@@ -97,7 +97,7 @@ uint8_t light_state=1, light_state_prev=1;
 uint8_t dead_time=0;
 uint8_t humi_light;
 uint8_t isDay=0;
-uint8_t light_on_cycles;
+uint8_t light_on_cycles=0;
 uint8_t cycle_state=0;
 
 float humidity = 0;
@@ -115,8 +115,17 @@ byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packe
 
 void setup()
 {
+
+
+ strip.begin();
+
+	strip.setPixelColor(0,strip.Color(0,0,0));
+	strip.show();
+	// Get the IP address from DHCP
+  delay(2000);
+	wdt_enable(WDTO_8S);
 	Initialize();
-    wdt_disable();
+  
 	// Get the IP address from DHCP
 	Souliss_SetIPAddress(ip_address, subnet_mask, ip_gateway);
 
@@ -149,13 +158,13 @@ void setup()
 
 	Serial.println("packet sent");
     //TODO: change version
-    Serial.println("Verion 2.8.4");
+    Serial.println("Verion 2.8.9");
    
-	strip.begin();
+	
 
 	strip.setPixelColor(0,strip.Color(255,179,0)); //RGB
 	strip.show();
-	delay(2000);
+	delay(3000);
 
 	
 	if (Udp.parsePacket())
@@ -195,10 +204,10 @@ void setup()
 		strip.setPixelColor(0,strip.Color(200,0,0));
 		strip.show();
 	}
-	//mInput(AirWick)=Souliss_T1n_OnCmd;
+	
      wdt_enable(WDTO_1S);
 		 Serial.println("millis STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE, Airwick:,");
-	
+	delay(100);
 }  
 
 void loop()
@@ -245,6 +254,7 @@ void loop()
 			// light off for short time
       if  ((light_state==1) && (light_state_prev==0) && (light_on_cycles<50))
              mInput(FAN_HIGH)= Souliss_T1n_OffCmd;
+						 
        
 			 // reset counter if light OFF
 			 if (light_state==1) light_on_cycles=0; 
@@ -333,10 +343,10 @@ void loop()
 			   switch (led_num)
 			   
 			    {
-                       case 0:
-                       strip.setPixelColor(0,255,255,255); //white
+             case 0:
+             strip.setPixelColor(0,255,255,255); //white
 					   strip.setBrightness(255); 
-                       break;
+             break;
 					   
 					   case 1:
 					   if (isDay==1)  strip.setPixelColor(0,50,205,50);       //green
@@ -345,10 +355,10 @@ void loop()
 					   break;
 
 					   case 2:
-					   if (fan_state == FAN_ON_HUMI)  strip.setPixelColor(0,255,0,255);     // magenta
+					   if (fan_state == FAN_ON_HUMI)  strip.setPixelColor(0,155,0,255);     // magenta
 				           else  {
 						        if (mOutput(FAN_HIGH)==Souliss_T1n_OnCoil) 
-								   strip.setPixelColor(0,150,10,10);  //dark red
+								   strip.setPixelColor(0,100,10,10);  //dark red
 						             else   strip.setPixelColor(0,255,128,0);      
 									 }                   //orange;
 									 strip.setBrightness(255); 
@@ -519,8 +529,8 @@ void loop()
 				hour = (epoch % 86400L) / 3600 + 3;
 				// print the hour (86400 equals secs per day)
 				Serial.println(hour);
-				if (hour==7)  
-				   	mInput(AirWick)=Souliss_T1n_OnCmd;
+			//	if (hour==7)  
+			//	   	mInput(AirWick)=Souliss_T1n_OnCmd;
 
 						if ((hour>=7)&&(hour<=21)) isDay=1;
 		          else isDay=0; 		 
