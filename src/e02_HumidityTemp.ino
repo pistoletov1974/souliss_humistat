@@ -158,7 +158,7 @@ void setup()
 
 	Serial.println("packet sent");
     //TODO: change version
-    Serial.println("Verion 2.8.9");
+    Serial.println("Verion 2.9.0");
    
 	
 
