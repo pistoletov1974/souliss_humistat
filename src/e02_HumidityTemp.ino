@@ -115,8 +115,9 @@ byte packetBuffer[NTP_PACKET_SIZE]; //buffer to hold incoming and outgoing packe
 
 void setup()
 {
+	wdt_enable(WDTO_8S);
 	Initialize();
-    wdt_disable();
+  
 	// Get the IP address from DHCP
 	Souliss_SetIPAddress(ip_address, subnet_mask, ip_gateway);
 
