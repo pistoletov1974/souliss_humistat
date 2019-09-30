@@ -14,7 +14,8 @@ Used Pins:
 1-serial
 2-DHT22 sensor
 3-neopixel pin
-4-FAN_LOW
+4-FAN_LOW UPD w55 control power
+
 5-light sensor
 6-Valve_Open
 7-Valve_close
