@@ -64,7 +64,7 @@
 
 #define HUMIDITY 0 // Leav8e 2 slots for T53
 #define TEMP0 2	// Leave 2 slots for T52
-#define FAN_LOW 4
+#define Humi_Setpoint 4
 #define FAN_HIGH 5
 #define LIGHT 6
 #define HUMISET 8
@@ -143,7 +143,7 @@ void setup()
 	Set_Humidity(HUMIDITY);
 	Set_Temperature(TEMP0);
 	Set_SimpleLight(FAN_HIGH);
-	Set_SimpleLight(FAN_LOW);
+	Set_SimpleLight(Humi_Setpoint);
 	Set_DigitalInput(LIGHT);
 	Set_Humidity_Setpoint(HUMISET);
 	Set_T22(Cold_Valve);
@@ -158,7 +158,7 @@ void setup()
 
 	Serial.println("packet sent");
     //TODO: change version
-    Serial.println("Verion 2.9.0");
+    Serial.println("Verion 3.0.0");
    
 	
 
@@ -267,7 +267,7 @@ void loop()
 			//Souliss_DigInHold(5, Souliss_T1n_OffCmd, Souliss_T1n_OnCmd, LIGHT, 10000);
 
 			Logic_SimpleLight(FAN_HIGH);
-			//Logic_SimpleLight(FAN_LOW);
+			//Logic_SimpleLight(Humi_Setpoint);
 
 			//Logic_Humidity_Setpoint(HUMISET);
 			Logic_Humidity(HUMIDITY);
@@ -406,9 +406,9 @@ void loop()
 			Serial.print(mOutput(FAN_HIGH));
 			Serial.print(mAuxiliary(FAN_HIGH));
 			Serial.print(",");
-			Serial.print(mInput(FAN_LOW));
-			Serial.print(mOutput(FAN_LOW));
-			Serial.print(mAuxiliary(FAN_LOW));
+			Serial.print(mInput(Humi_Setpoint));
+			Serial.print(mOutput(Humi_Setpoint));
+			Serial.print(mAuxiliary(Humi_Setpoint));
 			
       Serial.print(",");
       int sensor_read=digitalRead(5);
@@ -422,6 +422,7 @@ void loop()
 			//Serial.print(",");
 			Serial.print(mAuxiliary(Cold_Valve));
 			Serial.println(mInput(AirWick));
+			
 		}
 
 		SLOW_50s()
