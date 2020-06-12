@@ -64,7 +64,7 @@
 
 #define HUMIDITY 0 // Leav8e 2 slots for T53
 #define TEMP0 2	// Leave 2 slots for T52
-#define Humi_Setpoint 4
+//#define Humi_Setpoint 4
 #define FAN_HIGH 5
 #define LIGHT 6
 #define HUMISET 8
@@ -102,6 +102,7 @@ uint8_t cycle_state=0;
 
 float humidity = 0;
 float humidity_prev = 0;
+float humi_SET = 85;
 #define myvNet_address ip_address[3] // The last byte of the IP address (77) is also the vNet address
 #define myvNet_subnet 0xFF00
 EthernetUDP Udp;
@@ -143,7 +144,7 @@ void setup()
 	Set_Humidity(HUMIDITY);
 	Set_Temperature(TEMP0);
 	Set_SimpleLight(FAN_HIGH);
-	Set_SimpleLight(Humi_Setpoint);
+//	Set_SimpleLight(Humi_Setpoint);
 	Set_DigitalInput(LIGHT);
 	Set_Humidity_Setpoint(HUMISET);
 	Set_T22(Cold_Valve);
@@ -158,7 +159,7 @@ void setup()
 
 	Serial.println("packet sent");
     //TODO: change version
-    Serial.println("Verion 3.0.0");
+    Serial.println("Verion 3.1.0");
    
 	
 
@@ -206,7 +207,7 @@ void setup()
 	}
 	
      wdt_enable(WDTO_1S);
-		 Serial.println("millis STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE, Airwick:,");
+		 Serial.println("millis STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE, Airwick,HumiSetpoint:,");
 	delay(100);
 }  
 
@@ -273,6 +274,7 @@ void loop()
 			Logic_Humidity(HUMIDITY);
 			Logic_Temperature(TEMP0);
 			Logic_T22(Cold_Valve);
+			humi_SET = Souliss_SinglePrecisionFloating(&mInput(HUMISET));
 			DigOut(Valve_Open_PIN,Souliss_T2n_Coil_Open,Cold_Valve);
 			DigOut(Valve_Close_PIN,Souliss_T2n_Coil_Close,Cold_Valve);
 		//	DigOut(4, Souliss_T1n_Coil, FAN_LOW);
@@ -406,9 +408,9 @@ void loop()
 			Serial.print(mOutput(FAN_HIGH));
 			Serial.print(mAuxiliary(FAN_HIGH));
 			Serial.print(",");
-			Serial.print(mInput(Humi_Setpoint));
-			Serial.print(mOutput(Humi_Setpoint));
-			Serial.print(mAuxiliary(Humi_Setpoint));
+			Serial.print( mInput(HUMISET));
+			Serial.print(mOutput(HUMISET));
+			Serial.print(mAuxiliary(HUMISET));
 			
       Serial.print(",");
       int sensor_read=digitalRead(5);
@@ -421,8 +423,10 @@ void loop()
 			Serial.print(mOutput(Cold_Valve));
 			//Serial.print(",");
 			Serial.print(mAuxiliary(Cold_Valve));
-			Serial.println(mInput(AirWick));
 			
+			Serial.println(mInput(AirWick));
+			Serial.print("Setpoint:");
+			Serial.println(humi_SET);
 		}
 
 		SLOW_50s()
@@ -453,7 +457,7 @@ void loop()
 			//Serial.println(Souliss_SinglePrecisionFloating(&mOutput((HUMIDITY))));
 			// high humidity
 			//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 75% пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-			if ((humidity > 85 && fan_state == FAN_OFF) || (humidity>95))
+			if ((humidity > humi_SET && fan_state == FAN_OFF) || (humidity>95))
 			{
 				// day and use fan high
 				fan_state = FAN_ON_HUMI;
@@ -468,7 +472,7 @@ void loop()
 			} // if humidity
 
 			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 60  пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 7 пїЅпїЅпїЅпїЅпїЅ
-			if (humidity < 75 && fan_state == FAN_ON_HUMI)
+			if (humidity <  (humi_SET-12) && fan_state == FAN_ON_HUMI)
 			{
 
 				mInput(FAN_HIGH) = 0x30 + 6 * 1;
