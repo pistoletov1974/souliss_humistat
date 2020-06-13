@@ -32,6 +32,7 @@
 #include "conf/SmallNetwork.h"
 #include "user/float16.h"
 #include <avr/wdt.h>
+#include <avr/eeprom.h>
 // Enable DHCP and DNS
 
 // Include framework code and libraries
@@ -103,6 +104,7 @@ uint8_t cycle_state=0;
 float humidity = 0;
 float humidity_prev = 0;
 float humi_SET = 85;
+word  humi_eeprom;
 #define myvNet_address ip_address[3] // The last byte of the IP address (77) is also the vNet address
 #define myvNet_subnet 0xFF00
 EthernetUDP Udp;
@@ -159,7 +161,7 @@ void setup()
 
 	Serial.println("packet sent");
     //TODO: change version
-    Serial.println("Verion 3.1.0");
+    Serial.println("Verion 3.2.0");
    
 	
 
@@ -209,6 +211,13 @@ void setup()
      wdt_enable(WDTO_1S);
 		 Serial.println("millis STATE HIGH LOW INPUT_LIGHT FAN_STATE VAlVE, Airwick,HumiSetpoint:,");
 	delay(100);
+
+  //read HUMIset from eeprom
+	humi_eeprom=eeprom_read_word(10);
+ // humi_SET = Souliss_SinglePrecisionFloating((uint8_t*)&humi_eeprom);
+  humi_SET = eeprom_read_word(10);
+	Serial.println(humi_SET);
+
 }  
 
 void loop()
@@ -274,7 +283,7 @@ void loop()
 			Logic_Humidity(HUMIDITY);
 			Logic_Temperature(TEMP0);
 			Logic_T22(Cold_Valve);
-			humi_SET = Souliss_SinglePrecisionFloating(&mInput(HUMISET));
+	
 			DigOut(Valve_Open_PIN,Souliss_T2n_Coil_Open,Cold_Valve);
 			DigOut(Valve_Close_PIN,Souliss_T2n_Coil_Close,Cold_Valve);
 		//	DigOut(4, Souliss_T1n_Coil, FAN_LOW);
@@ -440,9 +449,26 @@ void loop()
 			           while(1){
 									 /* code */
 								 };
+      
+
 			}
 
+     if (isnan(Souliss_SinglePrecisionFloating(&mInput(HUMISET)))) {
+       
+			 humi_SET = eeprom_read_word(10);
 
+		 }   else {
+
+       if (humi_SET!=Souliss_SinglePrecisionFloating(&mInput(HUMISET))) {
+           //received new value from souliss
+					 humi_SET=Souliss_SinglePrecisionFloating(&mInput(HUMISET));
+					 eeprom_write_word(10,humi_SET);
+
+
+			 }
+
+
+		 }
 
 			//if (!isnan(humidity) || !isnan(temperature)) {
 			ImportAnalog(HUMIDITY, &humidity);
