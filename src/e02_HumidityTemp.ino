@@ -161,7 +161,7 @@ void setup()
 
 	Serial.println("packet sent");
     //TODO: change version
-    Serial.println("Verion 3.2.1");
+    Serial.println("Verion 3.2.2");
    
 	
 
@@ -269,7 +269,10 @@ void loop()
 			 // reset counter if light OFF
 			 if (light_state==1) light_on_cycles=0; 
 			 light_state_prev=light_state; 
-
+             if ((fan_state==FAN_ON_HUMI)  &&  (isDay==1))
+             	{
+					mInput(FAN_HIGH) = Souliss_T1n_OnCmd;
+				}
 
 
 
@@ -298,41 +301,18 @@ void loop()
 
 	
 
-		// пїЅпїЅпїЅпїЅпїЅпїЅ  пїЅ 10 пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ
+		
 		FAST_11110ms()
 		{
-
 			Timer_SimpleLight(FAN_HIGH);
-			//Timer_SimpleLight(FAN_LOW);
-			
-		
+	
 		}
 
-        // default time 0xC0-0xA0 * 210 ms app 6 sec
-	/*	FAST_210ms()
-		{
-				//TODO: remove timers to another cycles
-			
-			
+ 
 
-		} */
-
-	      	FAST_710ms()
+	      	FAST_510ms()
 		 {
-           //TODO: fix conflict with another fast 210 cycle for airwick && light
-					 // airwick work only in day if light goes on and fan_high not run
-		       /* if ((hour>7)&&(hour<23) && (mOutput(FAN_HIGH)==Souliss_T1n_OffCoil) && (dead_time==0) )  {
-		   
-		   light_state=digitalRead(light_pin);
-		   if ((light_state==LOW) && (light_state!=light_state_prev)) 
-		   {
-                     mInput(AirWick)=Souliss_T1n_OnCmd;
-					 dead_time=1;
-		   }
-		       	             
-		    light_state_prev=light_state;	
-				   
-		   } */
+          
 		   Logic_T14(AirWick);
 		 }
 
@@ -345,11 +325,7 @@ void loop()
 
 		FAST_2110ms()
 		 {
-               // led colours rotation (see readme.md)
-			   //Serial.print("ST:");
-			   //Serial.print(led_num);
-			   //Serial.print(";");
-			   //Serial.println(millis());
+               
 
 			   switch (led_num)
 			   
@@ -369,8 +345,8 @@ void loop()
 					   if (fan_state == FAN_ON_HUMI)  strip.setPixelColor(0,155,0,255);     // magenta
 				           else  {
 						        if (mOutput(FAN_HIGH)==Souliss_T1n_OnCoil) 
-								   strip.setPixelColor(0,100,10,10);  //dark red
-						             else   strip.setPixelColor(0,255,128,0);      
+								   strip.setPixelColor(0,100,10,10);  //dark red in light mode
+						             else   strip.setPixelColor(0,255,128,0);  //MAGENTA IF fan humidity mode    
 									 }                   //orange;
 									 strip.setBrightness(255); 
 					  break;
@@ -483,7 +459,7 @@ void loop()
 			//Serial.println(Souliss_SinglePrecisionFloating(&mOutput((HUMIDITY))));
 			// high humidity
 			//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 75% пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-			if ((humidity > humi_SET && fan_state == FAN_OFF) || (humidity>95))
+			if ((humidity > humi_SET && fan_state == FAN_OFF))
 			{
 				// day and use fan high
 				fan_state = FAN_ON_HUMI;
@@ -498,7 +474,7 @@ void loop()
 			} // if humidity
 
 			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 60  пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 7 пїЅпїЅпїЅпїЅпїЅ
-			if (humidity <  (humi_SET-12) && fan_state == FAN_ON_HUMI)
+			if (humidity <  (humi_SET-10) && fan_state == FAN_ON_HUMI)
 			{
 
 				mInput(FAN_HIGH) = 0x30 + 6 * 1;
