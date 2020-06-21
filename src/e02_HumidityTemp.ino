@@ -161,7 +161,7 @@ void setup()
 
 	Serial.println("packet sent");
     //TODO: change version
-    Serial.println("Verion 3.2.2");
+    Serial.println("Verion 3.2.3");
    
 	
 
@@ -459,22 +459,23 @@ void loop()
 			//Serial.println(Souliss_SinglePrecisionFloating(&mOutput((HUMIDITY))));
 			// high humidity
 			//пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ 75% пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ
-			if ((humidity > humi_SET && fan_state == FAN_OFF))
+			if ((humidity > humi_SET) && (fan_state == FAN_OFF))
 			{
 				// day and use fan high
-				fan_state = FAN_ON_HUMI;
+				
 				//Serial.println(fan_state);
 
 				if (hour >= 7 && hour <= 23)
 				{
 					mInput(FAN_HIGH) = Souliss_T1n_OnCmd;
+					fan_state = FAN_ON_HUMI;
 				}
 		
 
 			} // if humidity
 
 			//пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅ 60  пїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ 7 пїЅпїЅпїЅпїЅпїЅ
-			if (humidity <  (humi_SET-10) && fan_state == FAN_ON_HUMI)
+			if ((humidity <  (humi_SET-10)) && (fan_state == FAN_ON_HUMI))
 			{
 
 				mInput(FAN_HIGH) = 0x30 + 6 * 1;
