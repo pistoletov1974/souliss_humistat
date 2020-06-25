@@ -280,7 +280,7 @@ void loop()
 			//Souliss_DigInHold(5, Souliss_T1n_OffCmd, Souliss_T1n_OnCmd, LIGHT, 10000);
 
 			Logic_SimpleLight(FAN_HIGH);
-			//Logic_SimpleLight(Humi_Setpoint);
+			
 
 			//Logic_Humidity_Setpoint(HUMISET);
 			Logic_Humidity(HUMIDITY);
@@ -304,15 +304,13 @@ void loop()
 		
 		FAST_11110ms()
 		{
-			Timer_SimpleLight(FAN_HIGH);
-	
+			Timer_SimpleLight(FAN_HIGH);	
 		}
 
  
 
-	      	FAST_510ms()
-		 {
-          
+	  FAST_510ms()
+		 {          
 		   Logic_T14(AirWick);
 		 }
 
@@ -378,6 +376,7 @@ void loop()
 		// Process the other Gateway stuffs
 		FAST_GatewayComms();
 	}
+
 	EXECUTESLOW()
 	{
 		UPDATESLOW();
@@ -439,8 +438,6 @@ void loop()
            //received new value from souliss
 					 humi_SET=Souliss_SinglePrecisionFloating(&mInput(HUMISET));
 					 eeprom_write_word(10,humi_SET);
-
-
 			 }
 
 
@@ -449,9 +446,9 @@ void loop()
 			//if (!isnan(humidity) || !isnan(temperature)) {
 			ImportAnalog(HUMIDITY, &humidity);
 			ImportAnalog(TEMP0, &temperature);
-             Serial.print("TEMP HUMI:,");
+      Serial.print("TEMP HUMI:,");
 			Serial.print(temperature);
-            Serial.print(",");
+      Serial.print(",");
 			Serial.print((uint8_t)(((humi_light/20)*20)*2.5));
 			Serial.print(",");
 			Serial.println(humidity);
@@ -462,13 +459,13 @@ void loop()
 			if ((humidity > humi_SET) && (fan_state == FAN_OFF))
 			{
 				// day and use fan high
-				
+				fan_state = FAN_ON_HUMI;
 				//Serial.println(fan_state);
 
 				if (hour >= 7 && hour <= 23)
 				{
 					mInput(FAN_HIGH) = Souliss_T1n_OnCmd;
-					fan_state = FAN_ON_HUMI;
+				
 				}
 		
 
