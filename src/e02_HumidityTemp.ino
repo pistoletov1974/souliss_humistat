@@ -151,7 +151,7 @@ void setup()
 
 	Serial.println("packet sent");
 	//TODO: change version
-	Serial.println("Verion 3.2.3");
+	Serial.println("Verion 3.2.4");
 
 	strip.setPixelColor(0, strip.Color(255, 179, 0)); //RGB
 	strip.show();
@@ -401,6 +401,7 @@ void loop()
 			Serial.print(",");
 			Serial.println(humidity);
 			Logic_Humidity(HUMIDITY);
+			Logic_Humidity_Setpoint(HUMISET);
 			if ((humidity > humi_SET) && (fan_state == FAN_OFF))
 			{
 				if (hour >= 7 && hour <= 23)
