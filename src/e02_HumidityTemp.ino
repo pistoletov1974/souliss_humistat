@@ -151,7 +151,7 @@ void setup()
 
 	Serial.println("packet sent");
 	//TODO: change version
-	Serial.println("Verion 3.2.4");
+	Serial.println("Verion 3.2.5");
 
 	strip.setPixelColor(0, strip.Color(255, 179, 0)); //RGB
 	strip.show();
@@ -201,7 +201,7 @@ void setup()
 	delay(100);
 
 	//read HUMIset from eeprom
-	humi_eeprom = eeprom_read_word(10);
+	humi_eeprom = eeprom_read_word((const uint16_t)10);
 	// humi_SET = Souliss_SinglePrecisionFloating((uint8_t*)&humi_eeprom);
 	humi_SET = eeprom_read_word(10);
 	Serial.println(humi_SET);
@@ -238,7 +238,7 @@ void loop()
 				light_on_cycles++;
 			}
 
-			if ((light_on_cycles == 200) && (isDay == 1) && (fan_state != FAN_ON_HUMI))
+			if ((light_on_cycles == 200) && (isDay == 1))
 			{
 				mInput(FAN_HIGH) = 0x30 + 6 * 4;
 				light_on_cycles = 0;
@@ -402,7 +402,8 @@ void loop()
 			Serial.println(humidity);
 			Logic_Humidity(HUMIDITY);
 			Logic_Humidity_Setpoint(HUMISET);
-			if ((humidity > humi_SET) && (fan_state == FAN_OFF))
+			//TODO: add command to ON fan if humi between on-off and fan stoped
+			if ((humidity > humi_SET))
 			{
 				if (hour >= 7 && hour <= 23)
 				{
