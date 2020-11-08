@@ -254,6 +254,9 @@ void loop()
 			light_state_prev = light_state;
 
 			Logic_SimpleLight(FAN_HIGH);
+			
+
+			//Logic_Humidity_Setpoint(HUMISET);
 			Logic_Humidity(HUMIDITY);
 			Logic_Temperature(TEMP0);
 			Logic_T22(Cold_Valve);
@@ -268,11 +271,21 @@ void loop()
 
 		FAST_11110ms()
 		{
-			Timer_SimpleLight(FAN_HIGH);
+			Timer_SimpleLight(FAN_HIGH);	
 		}
 
-		FAST_510ms()
-		{
+ 
+
+	  FAST_510ms()
+		 {          
+		   Logic_T14(AirWick);
+		 }
+
+
+
+
+
+		
 
 			Logic_T14(AirWick);
 		}
@@ -328,6 +341,7 @@ void loop()
 		// Process the other Gateway stuffs
 		FAST_GatewayComms();
 	}
+
 	EXECUTESLOW()
 	{
 		UPDATESLOW();
@@ -375,8 +389,17 @@ void loop()
 				};
 			}
 
-			if (isnan(Souliss_SinglePrecisionFloating(&mInput(HUMISET))))
-			{
+     if (isnan(Souliss_SinglePrecisionFloating(&mInput(HUMISET)))) {
+       
+			 humi_SET = eeprom_read_word(10);
+
+		 }   else {
+
+       if (humi_SET!=Souliss_SinglePrecisionFloating(&mInput(HUMISET))) {
+           //received new value from souliss
+					 humi_SET=Souliss_SinglePrecisionFloating(&mInput(HUMISET));
+					 eeprom_write_word(10,humi_SET);
+			 }
 
 				humi_SET = eeprom_read_word(10);
 			}
@@ -394,10 +417,10 @@ void loop()
 			//if (!isnan(humidity) || !isnan(temperature)) {
 			ImportAnalog(HUMIDITY, &humidity);
 			ImportAnalog(TEMP0, &temperature);
-			Serial.print("TEMP HUMI:,");
+      Serial.print("TEMP HUMI:,");
 			Serial.print(temperature);
-			Serial.print(",");
-			Serial.print((uint8_t)(((humi_light / 20) * 20) * 2.5));
+      Serial.print(",");
+			Serial.print((uint8_t)(((humi_light/20)*20)*2.5));
 			Serial.print(",");
 			Serial.println(humidity);
 			Logic_Humidity(HUMIDITY);
@@ -405,10 +428,14 @@ void loop()
 			//TODO: add command to ON fan if humi between on-off and fan stoped
 			if ((humidity > humi_SET))
 			{
+				// day and use fan high
+				fan_state = FAN_ON_HUMI;
+				//Serial.println(fan_state);
+
 				if (hour >= 7 && hour <= 23)
 				{
 					mInput(FAN_HIGH) = Souliss_T1n_OnCmd;
-					fan_state = FAN_ON_HUMI;
+				
 				}
 
 			} // if humidity
