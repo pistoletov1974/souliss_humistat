@@ -1,3 +1,4 @@
+
 /**************************************************************************
     Souliss - DHTxx
     
@@ -150,8 +151,8 @@ void setup()
 	sendNTPpacket();
 
 	Serial.println("packet sent");
-	//TODO: change version
-	Serial.println("Verion 3.2.5");
+	//TODO: change version vs code
+	Serial.println("Verion 3.3.0");
 
 	strip.setPixelColor(0, strip.Color(255, 179, 0)); //RGB
 	strip.show();
@@ -201,9 +202,9 @@ void setup()
 	delay(100);
 
 	//read HUMIset from eeprom
-	humi_eeprom = eeprom_read_word((const uint16_t)10);
+	humi_eeprom = eeprom_read_word((const uint16_t)0x20);
 	// humi_SET = Souliss_SinglePrecisionFloating((uint8_t*)&humi_eeprom);
-	humi_SET = eeprom_read_word(10);
+	humi_SET = eeprom_read_word(0x20);
 	Serial.println(humi_SET);
 }
 
@@ -265,7 +266,7 @@ void loop()
 			DigOut(Valve_Close_PIN, Souliss_T2n_Coil_Close, Cold_Valve);
 			DigOut(9, Souliss_T1n_Coil, FAN_HIGH);
 			DigOut(8, Souliss_T1n_OnCoil, AirWick);
-			Timer_T22(Cold_Valve);
+			
 			LowDigIn(5, Souliss_T1n_OnCmd, AirWick);
 		}
 
@@ -277,20 +278,16 @@ void loop()
  
 
 	  FAST_510ms()
-		 {          
+		{          
 		   Logic_T14(AirWick);
-		 }
-
-
-
-
-
-		
-
-			Logic_T14(AirWick);
+		   Timer_T22(Cold_Valve);
 		}
 
-		FAST_2110ms()
+
+
+
+
+	     FAST_2110ms()
 		{
 
 			switch (led_num)
@@ -341,7 +338,6 @@ void loop()
 		// Process the other Gateway stuffs
 		FAST_GatewayComms();
 	}
-
 	EXECUTESLOW()
 	{
 		UPDATESLOW();
@@ -389,31 +385,33 @@ void loop()
 				};
 			}
 
-     if (isnan(Souliss_SinglePrecisionFloating(&mInput(HUMISET)))) {
-       
-			 humi_SET = eeprom_read_word(10);
+Serial.println(mInput(HUMISET));
 
-		 }   else {
+Serial.println(mOutput(HUMISET));
+Logic_Humidity_Setpoint(HUMISET);
 
-       if (humi_SET!=Souliss_SinglePrecisionFloating(&mInput(HUMISET))) {
-           //received new value from souliss
-					 humi_SET=Souliss_SinglePrecisionFloating(&mInput(HUMISET));
-					 eeprom_write_word(10,humi_SET);
-			 }
+if (isnan(Souliss_SinglePrecisionFloating(&mOutput(HUMISET))))
+			{
 
-				humi_SET = eeprom_read_word(10);
+				humi_SET = eeprom_read_word(0x20);
+				Serial.println("read eeprom isnan");
+				ImportAnalog(HUMISET, &humi_SET);
+				Logic_Humidity(HUMISET);
+
 			}
 			else
 			{
 
-				if (humi_SET != Souliss_SinglePrecisionFloating(&mInput(HUMISET)))
+				if (humi_SET != Souliss_SinglePrecisionFloating(&mOutput(HUMISET)))
 				{
 					//received new value from souliss
-					humi_SET = Souliss_SinglePrecisionFloating(&mInput(HUMISET));
-					eeprom_write_word(10, humi_SET);
+					humi_SET = Souliss_SinglePrecisionFloating(&mOutput(HUMISET));
+					eeprom_write_word(0x20, humi_SET);
+					Serial.print("write eeprom difference");
+					Serial.println(humi_SET);
+					//ImportAnalog(HUMISET, &humi_SET);
 				}
 			}
-
 			//if (!isnan(humidity) || !isnan(temperature)) {
 			ImportAnalog(HUMIDITY, &humidity);
 			ImportAnalog(TEMP0, &temperature);
@@ -424,32 +422,26 @@ void loop()
 			Serial.print(",");
 			Serial.println(humidity);
 			Logic_Humidity(HUMIDITY);
-			Logic_Humidity_Setpoint(HUMISET);
+			
 			//TODO: add command to ON fan if humi between on-off and fan stoped
 			if ((humidity > humi_SET))
 			{
-				// day and use fan high
+
 				fan_state = FAN_ON_HUMI;
-				//Serial.println(fan_state);
 
 				if (hour >= 7 && hour <= 23)
 				{
-					mInput(FAN_HIGH) = Souliss_T1n_OnCmd;
-				
+					mInput(FAN_HIGH) = Souliss_T1n_OnCmd;				
 				}
 
 			} // if humidity
 			else if ((humidity < (humi_SET - 10)) && (fan_state == FAN_ON_HUMI))
 			{
-
 				mInput(FAN_HIGH) = 0x30 + 6 * 1;
-
 				fan_state = FAN_OFF;
-
 				dead_time = 1;
-				// 7 пїЅпїЅпїЅпїЅпїЅ
 			}
-		}
+		} //slow 50 sec
 
 		SLOW_x10s(3)
 		{
@@ -507,16 +499,14 @@ void loop()
 						isDay = 1;
 					else
 						isDay = 0;
-
 				} // if parsePacket
 
 			} //else
-		}
+		} //slow 110sec
 
-		//Serial.print("sl_out:");
-		//Serial.println(millis());
-	}
-}
+
+	}   //update slow
+}  //loop
 
 void sendNTPpacket()
 {
